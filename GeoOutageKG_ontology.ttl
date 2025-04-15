@@ -1,0 +1,98 @@
+@prefix ex: <http://example.org/ontology#> .
+@prefix dbpedia: <https://dbpedia.org/page/> .
+@prefix ma-ont: <http://www.w3.org/ns/ma-ont#> .
+@prefix eo-ont: <https://www.eoknowledgehub.cn/eo/ontology/> .
+@prefix eor: <https://www.eoknowledgehub.cn/eo/resource/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix schema: <http://schema.org/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+dbpedia:County_%28United_States%29 rdfs:label "County" .
+
+#########################
+# Class Definitions
+#########################
+
+ex:NTLImage a rdfs:Class ;
+    rdfs:subClassOf ma-ont:Image ;
+    rdfs:label "NTL Image"@en ;
+    rdfs:comment "A subclass of ma-ont:Image representing Nighttime Light images from Black Marble Dataset."@en ;
+    ex:representsCounty dbpedia:County_%28United_States%29 ;
+    ex:fromSatellite eor:satellite.2011-061A ;
+    ex:fromSensor eor:sensor.1c58ddb9-2b4c-4fe0-9970-f5fdc7242f6b ;
+    ex:hasOutageMap ex:OutageMap .
+
+ex:SatelliteImage a rdfs:Class ;
+    rdfs:subClassOf ma-ont:Image ;
+    rdfs:label "Satellite Image"@en ;
+    rdfs:comment "A subclass of ma-ont:Image representing Visual Satellite Imagery from GOES-East satellite."@en ;
+    ex:representsCounty dbpedia:County_%28United_States%29 ;
+    ex:fromSatellite eor:satellite.2016-071A ;
+    ex:fromSensor eor:sensor.3f4de535-ec67-4598-9f59-eb6e9d5a0c67 .
+
+ex:OutageMap a rdfs:Class ;
+    rdfs:subClassOf ma-ont:Image ;
+    rdfs:label "Outage Map"@en ;
+    rdfs:comment "Power outage map of county generated using NTL Imagery and Multimodal Outage Detector."@en ;
+    ex:representsCounty dbpedia:County_%28United_States%29 .
+
+ex:OutageRecord a rdfs:Class ;
+    rdfs:label "Outage Record"@en ;
+    rdfs:comment "Numerical outage record for county at date and time from Eagle-I dataset."@en ;
+    ex:representsCounty dbpedia:County_%28United_States%29 ;
+    ex:hasOutageMap ex:OutageMap .
+
+ex:EnergyProvider a rdfs:Class ;
+    rdfs:label "Energy Provider"@en ;
+    rdfs:comment "Energy Provider for a County."@en ;
+    ex:representsCounty dbpedia:County_%28United_States%29 .
+
+ex:EnergyProduction a rdfs:Class ;
+    rdfs:label "Energy Production"@en ;
+    rdfs:comment "Energy Production Output per County in MWh."@en ;
+    ex:representsCounty dbpedia:County_%28United_States%29 .
+
+#########################
+# Property Definitions
+#########################
+
+ex:fipsCode a owl:DatatypeProperty ;
+    rdfs:label "FIPS Code"@en ;
+    schema:domainIncludes dbpedia:County_%28United_States%29 ;
+    rdfs:comment "The Federal Information Processing Standards (FIPS) code for the U.S. county."@en ;
+    rdfs:range xsd:string .
+
+ex:modelUsed a owl:DatatypeProperty ;
+    rdfs:label "Model Used"@en ;
+    schema:domainIncludes ex:OutageMap ;
+    rdfs:comment "Model used to generate outage map."@en ;
+    rdfs:range xsd:string .
+
+ex:recordDateTime a owl:DatatypeProperty ;
+    rdfs:label "Outage Record DateTime"@en ;
+    schema:domainIncludes ex:OutageRecord ;
+    rdfs:comment "Date and time for numerical outage record for county from Eagle-I dataset."@en ;
+    rdfs:range xsd:dateTime .
+
+ex:numberOfOutages a owl:DatatypeProperty ;
+    rdfs:label "Number of Outages"@en ;
+    schema:domainIncludes ex:OutageRecord ;
+    rdfs:comment "Numerical outage record for county at date and time from Eagle-I dataset."@en ;
+    rdfs:range xsd:integer .
+
+
+#########################
+# Examples
+#########################
+
+ex:NTLEx a ex:NTLImage ;
+    ex:representsCounty dbpedia:Orange_County%2C_Florida ;
+    ex:hasOutageMap ex:OutageEx .
+
+ex:OutageEx a ex:OutageMap ;
+    ex:representsCounty dbpedia:Orange_County%2C_Florida ;
+    ma-ont:locator "http://example.org/" .
+
+dbpedia:Orange_County%2C_Florida a dbpedia:County_%28United_States%29 .
