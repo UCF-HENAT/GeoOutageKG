@@ -6,3 +6,5 @@ Ontologies resued for GeoOutageKG:
 - [GEOSatDB](https://doi.org/10.1080/20964471.2024.2331992)
 - [DBPedia](https://www.dbpedia.org/)
 - [Ontology for Media Resources](https://www.w3.org/ns/ma-ont)
+
+All files including NTL and Outage Map imagery can be found on our OSF repository at https://doi.org/10.17605/OSF.IO/QVD8B.
