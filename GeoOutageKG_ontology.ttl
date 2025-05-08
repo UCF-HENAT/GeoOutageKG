@@ -1,4 +1,4 @@
-@prefix ex: <http://example.org/ontology#> .
+@prefix goo: <http://example.org/ontology#> .
 @prefix dbo: <https://dbpedia.org/ontology/> .
 @prefix ma-ont: <http://www.w3.org/ns/ma-ont#> .
 @prefix eo-ont: <https://www.eoknowledgehub.cn/eo/ontology/> .
@@ -13,47 +13,47 @@
 # Class Definitions
 #########################
 
-ex:NTLImage a rdfs:Class ;
+goo:NTLImage a rdfs:Class ;
     rdfs:subClassOf ma-ont:Image ;
     rdfs:label "NTL Image"@en ;
     rdfs:comment "A subclass of ma-ont:Image representing Nighttime Light images from Black Marble Dataset."@en ;
-    ex:representsCounty dbo:AdministrativeRegion ;
-    ex:fromSatellite eor:satellite.2011-061A ;
-    ex:fromSensor eor:sensor.1c58ddb9-2b4c-4fe0-9970-f5fdc7242f6b ;
-    ex:hasOutageMap ex:OutageMap .
+    goo:representsCounty dbo:AdministrativeRegion ;
+    goo:fromSatellite eor:satellite.2011-061A ;
+    goo:fromSensor eor:sensor.1c58ddb9-2b4c-4fe0-9970-f5fdc7242f6b ;
+    goo:hasOutageMap goo:OutageMap .
 
-ex:OutageMap a rdfs:Class ;
+goo:OutageMap a rdfs:Class ;
     rdfs:subClassOf ma-ont:Image ;
     rdfs:label "Outage Map"@en ;
     rdfs:comment "Power outage map of county generated using NTL Imagery and Multimodal Outage Detector."@en ;
-    ex:representsCounty dbo:AdministrativeRegion .
+    goo:representsCounty dbo:AdministrativeRegion .
 
-ex:OutageRecord a rdfs:Class ;
+goo:OutageRecord a rdfs:Class ;
     rdfs:label "Outage Record"@en ;
     rdfs:comment "Numerical outage record for county at date and time from Eagle-I dataset."@en ;
-    ex:representsCounty dbo:AdministrativeRegion ;
-    ex:hasOutageMap ex:OutageMap ;
-    ex:hasNTLImage ex:NTLImage .
+    goo:representsCounty dbo:AdministrativeRegion ;
+    goo:hasOutageMap goo:OutageMap ;
+    goo:hasNTLImage goo:NTLImage .
 
 #########################
 # Datatype Properties
 #########################
 
-ex:fipsCode a owl:DatatypeProperty ;
+goo:fipsCode a owl:DatatypeProperty ;
     rdfs:label "FIPS Code"@en ;
     schema:domainIncludes dbo:AdministrativeRegion ;
     rdfs:comment "The Federal Information Processing Standards (FIPS) code for the U.S. county."@en ;
     rdfs:range xsd:string .
 
-ex:recordDateTime a owl:DatatypeProperty ;
+goo:recordDateTime a owl:DatatypeProperty ;
     rdfs:label "Outage Record DateTime"@en ;
-    schema:domainIncludes ex:OutageRecord ;
+    schema:domainIncludes goo:OutageRecord ;
     rdfs:comment "Date and time for numerical outage record for county from Eagle-I dataset."@en ;
     rdfs:range xsd:dateTime .
 
-ex:numberOfOutages a owl:DatatypeProperty ;
+goo:numberOfOutages a owl:DatatypeProperty ;
     rdfs:label "Number of Outages"@en ;
-    schema:domainIncludes ex:OutageRecord ;
+    schema:domainIncludes goo:OutageRecord ;
     rdfs:comment "Numerical outage record for county at date and time from Eagle-I dataset."@en ;
     rdfs:range xsd:integer .
 
@@ -61,32 +61,32 @@ ex:numberOfOutages a owl:DatatypeProperty ;
 # Object Properties
 #########################
 
-ex:representsCounty a owl:ObjectProperty ;
+goo:representsCounty a owl:ObjectProperty ;
     rdfs:label "represents county"@en ;
-    schema:domainIncludes ma-ont:Image , ex:OutageRecord ;
+    schema:domainIncludes ma-ont:Image , goo:OutageRecord ;
     rdfs:range dbo:AdministrativeRegion ;
     rdfs:comment "Links an NTL image, outage map, or outage record to U.S. county (instance of dbo:AdministrativeRegion) that it depicts."@en .
 
-ex:fromSatellite a owl:ObjectProperty ;
+goo:fromSatellite a owl:ObjectProperty ;
     rdfs:label "from satellite"@en ;
-    schema:domainIncludes ex:NTLImage ;
+    schema:domainIncludes goo:NTLImage ;
     rdfs:range eo-ont:Satellite ;
     rdfs:comment "Indicates which satellite captured the image."@en .
 
-ex:fromSensor a owl:ObjectProperty ;
+goo:fromSensor a owl:ObjectProperty ;
     rdfs:label "from sensor"@en ;
-    schema:domainIncludes ex:NTLImage ;
+    schema:domainIncludes goo:NTLImage ;
     rdfs:range eo-ont:Sensor ;
     rdfs:comment "Indicates which sensor (instrument) on the satellite captured the image."@en .
 
-ex:hasOutageMap a owl:ObjectProperty ;
+goo:hasOutageMap a owl:ObjectProperty ;
     rdfs:label "has outage map"@en ;
-    schema:domainIncludes ex:NTLImage , ex:OutageRecord ;
-    rdfs:range ex:OutageMap ;
+    schema:domainIncludes goo:NTLImage , goo:OutageRecord ;
+    rdfs:range goo:OutageMap ;
     rdfs:comment "Associates numerical NTL image or outage record with power outage severity map generated from NTL image."@en .
 
-ex:hasNTLImage a owl:ObjectProperty ;
+goo:hasNTLImage a owl:ObjectProperty ;
     rdfs:label "has NTL image"@en ;
-    schema:domainIncludes ex:outageRecord ;
-    rdfs:range ex:NTLImage ;
+    schema:domainIncludes goo:outageRecord ;
+    rdfs:range goo:NTLImage ;
     rdfs:comment "Associates numerical outage record with NTL image from same day as recorded outage record."@en .
