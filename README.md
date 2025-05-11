@@ -8,3 +8,5 @@ Ontologies resued for GeoOutageKG:
 - [Ontology for Media Resources](https://www.w3.org/ns/ma-ont)
 
 All files including NTL and Outage Map imagery can be found on our OSF repository at https://doi.org/10.17605/OSF.IO/QVD8B.
+
+This project is licensed under the terms of the [MIT License](./LICENSE).
