@@ -1,7 +1,7 @@
 from gadm import GADMDownloader
 from blackmarble.download import BlackMarbleDownloader
 import pickle
-from shapely import Polygon
+from pathlib import Path
 import geopandas as gpd
 import os
 import pandas as pd
@@ -126,65 +126,87 @@ def download_county_data_vnp46a2(h5_files, county_name, poly):
       print(f"Failed on file {h5}: {e}")
 
 def download_county_data_vnp46a3(h5_files, county_name, poly):
-  """
-  Download daily VNP46A3 data for one Florida county.
-
-  Args:
-      county_name (str): normalized county name (lower, underscores)
-      date_range (pd.DatetimeIndex): daily dates to download
-  """
-
-  DATA_PATH = "./county_VNP46A3"
-  # prepare output directory
-  county_path = os.path.join(DATA_PATH, county_name)
-  os.makedirs(county_path, exist_ok=True)
-
-  datasets = []
-  # read & mask each day
-  for h5 in h5_files:
-    print(h5)
-    ds = xr.open_dataset(
-        h5,
-        engine="h5netcdf",
-        group="HDFEOS/GRIDS/VIIRS_Grid_DNB_2d/Data Fields/",
-        backend_kwargs={"phony_dims": "sort"}
-    )
-
-    doy = h5.stem.split(".")[1]               # e.g. "A2018001"
-    time = pd.to_datetime(doy, format="A%Y%j")
-    ds = ds.assign_coords(time=time)
-    lat = ds['lat'].values
-    lon = ds['lon'].values
-    da = ds["NearNadir_Composite_Snow_Free"]
-    da = da.rename({"phony_dim_0": "y", "phony_dim_1": "x"})
-    # Flip the raw data along the y-axis:
-    da = da.isel(y=slice(None, None, -1))
-    lat1d = lat[::-1]
-    lon1d = lon   # east-west doesn't need flipping
-
-    da = da.rename({"y":"latitude", "x":"longitude"})
+    """
+    Download monthly VNP46A3 data for one Florida county,
+    mosaicking all tiles per month into one array before masking.
+    """
+    DATA_PATH = "./county_VNP46A3"
+    county_path = os.path.join(DATA_PATH, county_name)
+    os.makedirs(county_path, exist_ok=True)
     
-    lon2d, lat2d = np.meshgrid(lon1d, lat1d)
-    mask = contains(poly, lon2d, lat2d)
-    if not mask.any():
-        print(f"  → no overlap for {county_name} on {time.strftime('%Y%m%d')}, skipping")
-        continue
 
-    mask_da = xr.DataArray(mask, dims=("latitude","longitude"),
-                            coords={"latitude": da.latitude, "longitude": da.longitude})
-    da = da.where(mask_da, drop=True)
-    da = da.expand_dims(time=[time])
-    datasets.append(da)
+    # 1) Group all files by their month
+    files_by_month = {}
+    for h5 in h5_files:
+        stem = Path(h5).stem                   # e.g. "VNP46A3.A2022152.h09v05"
+        doy   = stem.split(".")[1]             # "A2022152"
+        dt    = pd.to_datetime(doy, format="A%Y%j")
+        month = dt.to_period("M")
+        files_by_month.setdefault(month, []).append((h5, dt))
 
-  # 5) Open them with xarray and concatenate on time
-  vnp46a3_data = xr.concat(datasets, dim="time")
-  print(type(vnp46a3_data))
+    monthly_arrays = []
+    for month, month_files in sorted(files_by_month.items()):
+        tile_datasets = []
+        for h5, dt in month_files:
+            ds = xr.open_dataset(
+                h5,
+                engine="h5netcdf",
+                group="HDFEOS/GRIDS/VIIRS_Grid_DNB_2d/Data Fields/",
+                backend_kwargs={"phony_dims": "sort"}
+            )
 
-  print(vnp46a3_data)
+            da = ds["NearNadir_Composite_Snow_Free"] \
+                   .rename({"phony_dim_0": "y", "phony_dim_1": "x"}) \
+                   .isel(y=slice(None, None, -1))
 
-  save_path = os.path.join(county_path, f"{county_name}_{time.year}.pickle")
-  with open(save_path, 'wb') as file:
-      pickle.dump(vnp46a3_data, file)
+            # rebuild 1-d coords
+            lat1d = ds["lat"].values[::-1]
+            lon1d = ds["lon"].values
+            da = da.assign_coords(y=("y", lat1d), x=("x", lon1d)) \
+                   .rename({"y": "latitude", "x": "longitude"})
+
+            # wrap into a Dataset so we can merge tiles
+            tile_datasets.append(da.to_dataset())
+
+        if not tile_datasets:
+            continue
+
+        # 2) Mosaic all tiles into one Dataset (outer join on lat/lon)
+        mosaic_ds = xr.merge(tile_datasets, join="outer")
+
+        # 3) Extract the combined DataArray
+        mosaic_da = mosaic_ds["NearNadir_Composite_Snow_Free"]
+
+        # 4) Put back the proper time coordinate (first of month)
+        time = month.to_timestamp()  # e.g. Timestamp('2022-06-01 00:00:00')
+        mosaic_da = mosaic_da.expand_dims(time=[time])
+
+        # 5) Mask to the county polygon
+        lon2d, lat2d = np.meshgrid(mosaic_da.longitude.values,
+                                   mosaic_da.latitude.values)
+        mask = contains(poly, lon2d, lat2d)
+        mask_da = xr.DataArray(mask,
+                               dims=("latitude", "longitude"),
+                               coords={
+                                   "latitude": mosaic_da.latitude,
+                                   "longitude": mosaic_da.longitude
+                               })
+        mosaic_da = mosaic_da.where(mask_da, drop=True)
+
+        monthly_arrays.append(mosaic_da)
+
+    if monthly_arrays:
+        # 6) Concatenate the monthly mosaics along time
+        vnp46a3_data = xr.concat(monthly_arrays, dim="time")
+
+        # 7) Save one pickle per county per year (or adjust filename as you like)
+        year = monthly_arrays[0].time.dt.year.values.tolist()[0]
+        out_fp = os.path.join(county_path, f"{county_name}_{year}.pickle")
+        with open(out_fp, "wb") as f:
+            pickle.dump(vnp46a3_data, f)
+        print(f"  → saved {out_fp}")
+    else:
+        print(f"  → no data for {county_name}")
 
 if __name__ == "__main__":
-  download_all_counties(product="VNP46A3", date_range=("2022-06-01", "2022-12-31"))
+  download_all_counties(product="VNP46A3", date_range=("2024-06-01", "2024-12-31"))

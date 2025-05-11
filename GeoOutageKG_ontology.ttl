@@ -39,12 +39,6 @@ goo:OutageRecord a rdfs:Class ;
 # Datatype Properties
 #########################
 
-goo:fipsCode a owl:DatatypeProperty ;
-    rdfs:label "FIPS Code"@en ;
-    schema:domainIncludes dbo:AdministrativeRegion ;
-    rdfs:comment "The Federal Information Processing Standards (FIPS) code for the U.S. county."@en ;
-    rdfs:range xsd:string .
-
 goo:recordDateTime a owl:DatatypeProperty ;
     rdfs:label "Outage Record DateTime"@en ;
     schema:domainIncludes goo:OutageRecord ;
