@@ -1,4 +1,4 @@
-@prefix goo: <http://example.org/ontology#> .
+@prefix goo: <https://ucf-henat.github.io/GeoOutageOnto/#> .
 @prefix dbo: <https://dbpedia.org/ontology/> .
 @prefix ma-ont: <http://www.w3.org/ns/ma-ont#> .
 @prefix eo-ont: <https://www.eoknowledgehub.cn/eo/ontology/> .
@@ -16,24 +16,16 @@
 goo:NTLImage a rdfs:Class ;
     rdfs:subClassOf ma-ont:Image ;
     rdfs:label "NTL Image"@en ;
-    rdfs:comment "A subclass of ma-ont:Image representing Nighttime Light images from Black Marble Dataset."@en ;
-    goo:representsCounty dbo:AdministrativeRegion ;
-    goo:fromSatellite eor:satellite.2011-061A ;
-    goo:fromSensor eor:sensor.1c58ddb9-2b4c-4fe0-9970-f5fdc7242f6b ;
-    goo:hasOutageMap goo:OutageMap .
+    rdfs:comment "A subclass of ma-ont:Image representing Nighttime Light images from Black Marble Dataset."@en .
 
 goo:OutageMap a rdfs:Class ;
     rdfs:subClassOf ma-ont:Image ;
     rdfs:label "Outage Map"@en ;
-    rdfs:comment "Power outage map of county generated using NTL Imagery and Multimodal Outage Detector."@en ;
-    goo:representsCounty dbo:AdministrativeRegion .
+    rdfs:comment "Power outage map of county generated using NTL Imagery and Multimodal Outage Detector."@en .
 
 goo:OutageRecord a rdfs:Class ;
     rdfs:label "Outage Record"@en ;
-    rdfs:comment "Numerical outage record for county at date and time from Eagle-I dataset."@en ;
-    goo:representsCounty dbo:AdministrativeRegion ;
-    goo:hasOutageMap goo:OutageMap ;
-    goo:hasNTLImage goo:NTLImage .
+    rdfs:comment "Numerical outage record for county at date and time from Eagle-I dataset."@en .
 
 #########################
 # Datatype Properties
@@ -41,13 +33,13 @@ goo:OutageRecord a rdfs:Class ;
 
 goo:recordDateTime a owl:DatatypeProperty ;
     rdfs:label "Outage Record DateTime"@en ;
-    schema:domainIncludes goo:OutageRecord ;
+    rdfs:domain goo:OutageRecord ;
     rdfs:comment "Date and time for numerical outage record for county from Eagle-I dataset."@en ;
     rdfs:range xsd:dateTime .
 
 goo:numberOfOutages a owl:DatatypeProperty ;
     rdfs:label "Number of Outages"@en ;
-    schema:domainIncludes goo:OutageRecord ;
+    rdfs:domain goo:OutageRecord ;
     rdfs:comment "Numerical outage record for county at date and time from Eagle-I dataset."@en ;
     rdfs:range xsd:integer .
 
@@ -57,30 +49,30 @@ goo:numberOfOutages a owl:DatatypeProperty ;
 
 goo:representsCounty a owl:ObjectProperty ;
     rdfs:label "represents county"@en ;
-    schema:domainIncludes ma-ont:Image , goo:OutageRecord ;
+    rdfs:domain ma-ont:Image , goo:OutageRecord ;
     rdfs:range dbo:AdministrativeRegion ;
     rdfs:comment "Links an NTL image, outage map, or outage record to U.S. county (instance of dbo:AdministrativeRegion) that it depicts."@en .
 
 goo:fromSatellite a owl:ObjectProperty ;
     rdfs:label "from satellite"@en ;
-    schema:domainIncludes goo:NTLImage ;
-    rdfs:range eo-ont:Satellite ;
+    rdfs:domain goo:NTLImage ;
+    rdfs:range eor:satellite.2011-061A ;
     rdfs:comment "Indicates which satellite captured the image."@en .
 
 goo:fromSensor a owl:ObjectProperty ;
     rdfs:label "from sensor"@en ;
-    schema:domainIncludes goo:NTLImage ;
-    rdfs:range eo-ont:Sensor ;
+    rdfs:domain goo:NTLImage ;
+    rdfs:range eor:sensor.1c58ddb9-2b4c-4fe0-9970-f5fdc7242f6b ;
     rdfs:comment "Indicates which sensor (instrument) on the satellite captured the image."@en .
 
 goo:hasOutageMap a owl:ObjectProperty ;
     rdfs:label "has outage map"@en ;
-    schema:domainIncludes goo:NTLImage , goo:OutageRecord ;
+    rdfs:domain goo:NTLImage , goo:OutageRecord ;
     rdfs:range goo:OutageMap ;
     rdfs:comment "Associates numerical NTL image or outage record with power outage severity map generated from NTL image."@en .
 
 goo:hasNTLImage a owl:ObjectProperty ;
     rdfs:label "has NTL image"@en ;
-    schema:domainIncludes goo:outageRecord ;
+    rdfs:domain goo:outageRecord ;
     rdfs:range goo:NTLImage ;
     rdfs:comment "Associates numerical outage record with NTL image from same day as recorded outage record."@en .

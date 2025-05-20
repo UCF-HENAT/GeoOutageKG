@@ -25,7 +25,7 @@ def create_outage_records(year: int):
 
     with open(outfile, 'w') as f:
         f.write(f"""\
-@prefix goo: <http://example.org/ontology#> .
+@prefix goo: <https://ucf-henat.github.io/GeoOutageOnto/#> .
 @prefix gokg: <http://example.org/resource#> .
 @prefix dbr: <https://dbpedia.org/page/> .
 @prefix ma-ont: <http://www.w3.org/ns/ma-ont#> .
@@ -82,7 +82,7 @@ def create_ntl_images(data_path: str):
 
     with open(outfile, 'w') as f:
         f.write(f"""\
-@prefix goo: <http://example.org/ontology#> .
+@prefix goo: <https://ucf-henat.github.io/GeoOutageOnto/#> .
 @prefix gokg: <http://example.org/resource#> .
 @prefix dbr: <https://dbpedia.org/page/> .
 @prefix ma-ont: <http://www.w3.org/ns/ma-ont#> .
@@ -130,7 +130,7 @@ def create_outage_maps(data_path: str):
 
     with open(outfile, 'w') as f:
         f.write(f"""\
-@prefix goo: <http://example.org/ontology#> .
+@prefix goo: <https://ucf-henat.github.io/GeoOutageOnto/#> .
 @prefix gokg: <http://example.org/resource#> .
 @prefix dbr: <https://dbpedia.org/page/> .
 @prefix ma-ont: <http://www.w3.org/ns/ma-ont#> .
