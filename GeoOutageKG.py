@@ -54,6 +54,8 @@ class GeoOutageKG:
             county_name = entry["county"].replace(" ", "_")
             fips_code = entry["fips_code"]
             num_outages = entry.get("customers_out", entry.get("sum"))
+            if pd.isna(num_outages):
+                continue
             time = entry["run_start_time"]
             time = datetime.strptime(time, "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d_%H:%M:%S")
             recordDateTime = datetime.strptime(time, "%Y-%m-%d_%H:%M:%S").strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -95,7 +97,7 @@ class GeoOutageKG:
 
     def create_ntl_images(self, out_path: str):
         """
-        Write NTLImage class instances to given year file with given dataset.
+        Write NTLImage class instances to given file with given dataset.
         """
         g = self.create_graph()
         with open(self.fips_json, 'r') as f:
@@ -145,7 +147,7 @@ class GeoOutageKG:
 
     def create_outage_maps(self, out_path: str):
         """
-        Write OutageMap class instances to given year file with given dataset.
+        Write OutageMap class instances to given file with given dataset.
         """
         g = self.create_graph()
         with open(self.fips_json, 'r') as f:
@@ -196,13 +198,13 @@ if __name__ == "__main__":
     ntl_dir        = os.path.join(root_dir, "VNP46A2_county_imgs/")
     outage_map_dir = os.path.join(root_dir, "outage_maps/")
     fips_json      = os.path.join(root_dir, "fips_codes.json")
-    year = 2014
 
     # Create GeoOutageKG instance
     gokg_write = GeoOutageKG(ntl_dir, outage_map_dir, fips_json, fmt="turtle")
 
     # Write TTL
-    gokg_write.create_outage_records(year, root_dir, out_path=f"outagerecord_{year}.ttl")
+    for year in range(2014, 2025):
+        gokg_write.create_outage_records(year, root_dir, out_path=f"outagerecord_{year}.ttl")
     gokg_write.create_outage_maps(out_path="outagemap.ttl")
-    # gokg_write.create_ntl_images(out_path="ntlimage.ttl")
+    gokg_write.create_ntl_images(out_path="ntlimage.ttl")
     
