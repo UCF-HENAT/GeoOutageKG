@@ -73,6 +73,6 @@ goo:hasOutageMap a owl:ObjectProperty ;
 
 goo:hasNTLImage a owl:ObjectProperty ;
     rdfs:label "has NTL image"@en ;
-    rdfs:domain goo:outageRecord ;
+    rdfs:domain goo:OutageRecord ;
     rdfs:range goo:NTLImage ;
     rdfs:comment "Associates numerical outage record with NTL image from same day as recorded outage record."@en .
