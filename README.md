@@ -73,7 +73,48 @@ Note: Online SPARQL endpoint for all NTLs, Outage Maps, and Records coming soon!
 ## Example SPARQL Queries
 The following section contains examples of SPARQL queries using GeoOutageKG, showing use cases for the knowledge graph.
 
-### All Data One Month Before and After Hurricane Ian
+### Query all entries for 29 September 2022
+```SPARQL
+PREFIX goo:  <https://ucf-henat.github.io/GeoOutageOnto/#>
+PREFIX ma-ont: <http://www.w3.org/ns/ma-ont#>
+PREFIX schema: <http://schema.org/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+SELECT * WHERE {
+    ?entry schema:name ?name ;
+    	   ma-ont:locator ?locator .
+    FILTER(CONTAINS(LCASE(?name), "2022-09-29"))
+}
+```
+
+### List greatest 100 Outage Records with county name & date, sorted from greatest to least
+```SPARQL
+PREFIX goo:  <https://ucf-henat.github.io/GeoOutageOnto/#>
+PREFIX dbo:  <https://dbpedia.org/ontology/>
+PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+SELECT 
+  ?rec   
+  ?county 
+  ?date
+  ?num
+WHERE {
+  ?rec a goo:OutageRecord ;
+       goo:representsCounty ?county ;
+       goo:recordDateTime   ?date ;
+       goo:numberOfOutages  ?num .
+}
+# Sort descending by number of outages
+ORDER BY DESC(?num)
+# Only the first 100 results
+LIMIT 100
+```
+
+### All Data with >100 Outages for Lee County, FL One Month Before and After Hurricane Ian
 ```SPARQL
 PREFIX goo:    <https://ucf-henat.github.io/GeoOutageOnto/#>
 PREFIX dbo:    <https://dbpedia.org/ontology/>
@@ -85,7 +126,7 @@ PREFIX rdfs:   <http://www.w3.org/2000/01/rdf-schema#>
 
 SELECT ?ntl ?map ?rec
 WHERE {
-  BIND(dbr:Orange_County%2C_Florida AS ?county)
+  BIND(dbr:Lee_County%2C_Florida AS ?county)
     
   # raw NTL images
   ?ntl a goo:NTLImage ;
