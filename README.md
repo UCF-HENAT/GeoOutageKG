@@ -89,6 +89,24 @@ SELECT * WHERE {
 }
 ```
 
+### List all Outage Records in the year 2017
+```SPARQL
+PREFIX goo:  <https://ucf-henat.github.io/GeoOutageOnto/#>
+PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
+
+SELECT 
+  ?rec          # The OutageRecord resource
+  ?recordDate   # Its dateTime
+  ?numOutages   # Its integer count
+WHERE {
+  ?rec a goo:OutageRecord ;
+       goo:recordDateTime ?recordDate ;
+       goo:numberOfOutages ?numOutages .
+  
+  FILTER (YEAR(?recordDate) = 2017)
+}
+```
+
 ### List greatest 100 Outage Records with county name & date, sorted from greatest to least
 ```SPARQL
 PREFIX goo:  <https://ucf-henat.github.io/GeoOutageOnto/#>
@@ -128,15 +146,15 @@ SELECT ?ntl ?map ?rec
 WHERE {
   BIND(dbr:Lee_County%2C_Florida AS ?county)
     
-  # raw NTL images
+  # Raw NTL images
   ?ntl a goo:NTLImage ;
        goo:representsCounty ?county .
 
-  # derived outage maps
+  # Derived outage maps
   ?map a goo:OutageMap ;
        goo:representsCounty ?county .
 
-  # numerical outage records
+  # Numerical outage records
   ?rec a goo:OutageRecord ;
        goo:representsCounty ?county ;
        goo:hasNTLImage      ?ntl ;
@@ -144,11 +162,49 @@ WHERE {
        goo:recordDateTime   ?date ;
        goo:numberOfOutages  ?num .
 
-  # only “surges” >100 outages in the 1-month windows before and after Hurricane Ian
+  # Only “surges” >100 outages in the 1-month windows before and after Hurricane Ian
   FILTER(?num > 100)
   FILTER(
     ?date >= "2022-08-28T00:00:00Z"^^xsd:dateTime &&
     ?date <  "2022-10-28T00:00:00Z"^^xsd:dateTime
   )
 }
+```
+
+### Find Outage Records with highest number of outages, then return NTL Image, Outage Map, county, date, and outage number. Return first 10 results.
+```SPARQL
+PREFIX goo:  <https://ucf-henat.github.io/GeoOutageOnto/#>
+PREFIX dbo:  <https://dbpedia.org/ontology/>
+PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
+
+SELECT 
+  ?county
+  ?maxOutages
+  ?dateOfMax
+  ?rec
+  ?ntl
+  ?map
+WHERE {
+  # Compute the maximum outages per county
+  {
+    SELECT 
+      ?county
+      (MAX(?num) AS ?maxOutages)
+    WHERE {
+      ?rec a goo:OutageRecord ;
+           goo:representsCounty ?county ;
+           goo:numberOfOutages  ?num .
+    }
+    GROUP BY ?county
+  }
+  # Link back to the records that match that maximum
+  ?rec a goo:OutageRecord ;
+       goo:representsCounty ?county ;
+       goo:numberOfOutages  ?maxOutages ;
+       goo:recordDateTime   ?dateOfMax ;
+       goo:hasNTLImage      ?ntl ;
+       goo:hasOutageMap     ?map .
+}
+ORDER BY DESC(?maxOutages)
+LIMIT 10
 ```
