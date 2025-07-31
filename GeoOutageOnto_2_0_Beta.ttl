@@ -1,0 +1,895 @@
+@prefix goo: <https://ucf-henat.github.io/GeoOutageOnto/#> .
+@prefix dbr: <https://dbpedia.org/page/> .
+@prefix wd: <https://www.wikidata.org/wiki/> .
+@prefix ma-ont: <http://www.w3.org/ns/ma-ont#> .
+@prefix eo-ont: <https://www.eoknowledgehub.cn/eo/ontology/> .
+@prefix eor: <https://www.eoknowledgehub.cn/eo/resource/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix schema: <http://schema.org/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix geosparql: <http://www.opengis.net/ont/geosparql#> .
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+
+#########################
+# Class Definitions
+#########################
+
+goo:County a rdfs:Class ;
+    rdfs:subClassOf geo:SpatialThing , geosparql:Feature ;
+    rdfs:label "County"@en ;
+    rdfs:comment "A U.S. county with geospatial coordinate metadata and links to external resources such as DBpedia and Wikidata."@en .
+
+goo:NTLImage a rdfs:Class ;
+    rdfs:subClassOf ma-ont:Image ;
+    rdfs:label "NTL Image"@en ;
+    rdfs:comment "A subclass of ma-ont:Image representing Nighttime Light images from Black Marble Dataset."@en .
+
+goo:OutageMap a rdfs:Class ;
+    rdfs:subClassOf ma-ont:Image ;
+    rdfs:label "Outage Map"@en ;
+    rdfs:comment "Power outage map of county generated using NTL Imagery and Multimodal Outage Detector."@en .
+
+goo:OutageRecord a rdfs:Class ;
+    rdfs:label "Outage Record"@en ;
+    rdfs:comment "Numerical outage record for county at date and time from Eagle-I dataset."@en .
+
+#########################
+# Datatype Properties
+#########################
+
+goo:geoHash a rdf:Property ;
+    rdfs:domain goo:County ;
+    rdfs:range  xsd:string ;
+    rdfs:label  "Geohash"@en .
+
+goo:recordDateTime a owl:DatatypeProperty ;
+    rdfs:label "Outage Record DateTime"@en ;
+    rdfs:domain goo:OutageRecord ;
+    rdfs:comment "Date and time for numerical outage record for county from Eagle-I dataset."@en ;
+    rdfs:range xsd:dateTime .
+
+goo:numberOfOutages a owl:DatatypeProperty ;
+    rdfs:label "Number of Outages"@en ;
+    rdfs:domain goo:OutageRecord ;
+    rdfs:comment "Numerical outage record for county at date and time from Eagle-I dataset."@en ;
+    rdfs:range xsd:integer .
+
+#########################
+# Object Properties
+#########################
+
+goo:representsCounty a owl:ObjectProperty ;
+    rdfs:label "represents county"@en ;
+    rdfs:domain ma-ont:Image , goo:OutageRecord ;
+    rdfs:range goo:County ;
+    rdfs:comment "Links an NTL image, outage map, or outage record to U.S. county that it depicts."@en .
+
+goo:fromSatellite a owl:ObjectProperty ;
+    rdfs:label "from satellite"@en ;
+    rdfs:domain goo:NTLImage ;
+    rdfs:range eor:satellite.2011-061A ;
+    rdfs:comment "Indicates which satellite captured the image."@en .
+
+goo:fromSensor a owl:ObjectProperty ;
+    rdfs:label "from sensor"@en ;
+    rdfs:domain goo:NTLImage ;
+    rdfs:range eor:sensor.1c58ddb9-2b4c-4fe0-9970-f5fdc7242f6b ;
+    rdfs:comment "Indicates which sensor (instrument) on the satellite captured the image."@en .
+
+goo:hasOutageMap a owl:ObjectProperty ;
+    rdfs:label "has outage map"@en ;
+    rdfs:domain goo:NTLImage , goo:OutageRecord ;
+    rdfs:range goo:OutageMap ;
+    rdfs:comment "Associates numerical NTL image or outage record with power outage severity map generated from NTL image."@en .
+
+goo:hasNTLImage a owl:ObjectProperty ;
+    rdfs:label "has NTL image"@en ;
+    rdfs:domain goo:OutageRecord ;
+    rdfs:range goo:NTLImage ;
+    rdfs:comment "Associates numerical outage record with NTL image from same day as recorded outage record."@en .
+
+#########################
+# County Definitions
+#########################
+
+goo:AlachuaCountyFL a goo:County ;
+    rdfs:label      "Alachua County, Florida"@en ;
+    owl:sameAs      dbr:Alachua_County%2C_Florida , wd:Q488826 ;
+    geo:lat         "29.67574"^^xsd:decimal ;
+    geo:long        "-82.357221"^^xsd:decimal ;
+    goo:geoHash     "djm2vfm"^^xsd:string ;
+    geosparql:hasGeometry goo:AlachuaCountyFLGeom .
+
+goo:AlachuaCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-82.65833333334001 29.420833333333366, -82.05000000000723 29.420833333333366, -82.05000000000723 29.94166666666667, -82.65833333334001 29.94166666666667, -82.65833333334001 29.420833333333366))"^^geo:wktLiteral .
+
+
+goo:BakerCountyFL a goo:County ;
+    rdfs:label      "Baker County, Florida"@en ;
+    owl:sameAs      dbr:Baker_County%2C_Florida , wd:Q156568 ;
+    geo:lat         "30.324442"^^xsd:decimal ;
+    geo:long        "-82.302284"^^xsd:decimal ;
+    goo:geoHash     "djmkx0m"^^xsd:string ;
+    geosparql:hasGeometry goo:BakerCountyFLGeom .
+
+goo:BakerCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-82.45833333334019 30.137499999993743, -82.05000000000723 30.137499999993743, -82.05000000000723 30.58333333332705, -82.45833333334019 30.58333333332705, -82.45833333334019 30.137499999993743))"^^geo:wktLiteral .
+
+
+goo:BayCountyFL a goo:County ;
+    rdfs:label      "Bay County, Florida"@en ;
+    owl:sameAs      dbr:Bay_County%2C_Florida , wd:Q488865 ;
+    geo:lat         "30.238218"^^xsd:decimal ;
+    geo:long        "-85.631680"^^xsd:decimal ;
+    goo:geoHash     "dj7h52s"^^xsd:string ;
+    geosparql:hasGeometry goo:BayCountyFLGeom .
+
+goo:BayCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-85.99166666667031 30.004166666660417, -85.38750000000420 30.004166666660417, -85.38750000000420 30.566666666660385, -85.99166666667031 30.566666666660385, -85.99166666667031 30.004166666660417))"^^geo:wktLiteral .
+
+
+goo:BradfordCountyFL a goo:County ;
+    rdfs:label      "Bradford County, Florida"@en ;
+    owl:sameAs      dbr:Bradford_County%2C_Florida , wd:Q156577 ;
+    geo:lat         "29.952386"^^xsd:decimal ;
+    geo:long        "-82.166679"^^xsd:decimal ;
+    goo:geoHash     "djmd6k8"^^xsd:string ;
+    geosparql:hasGeometry goo:BradfordCountyFLGeom .
+
+goo:BradfordCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-82.40833333334024 29.72083333333335, -82.05000000000723 29.72083333333335, -82.05000000000723 30.00000000000000, -82.40833333334024 30.00000000000000, -82.40833333334024 29.72083333333335))"^^geo:wktLiteral .
+
+
+goo:BrevardCountyFL a goo:County ;
+    rdfs:label      "Brevard County, Florida"@en ;
+    owl:sameAs      dbr:Brevard_County%2C_Florida , wd:Q488517 ;
+    geo:lat         "28.298311"^^xsd:decimal ;
+    geo:long        "-80.700333"^^xsd:decimal ;
+    goo:geoHash     "djn8gxe"^^xsd:string ;
+    geosparql:hasGeometry goo:BrevardCountyFLGeom .
+
+goo:BrevardCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-80.96666666667488 27.825000000000124, -80.45000000000869 27.825000000000124, -80.45000000000869 28.800000000000068, -80.96666666667488 28.800000000000068, -80.96666666667488 27.825000000000124))"^^geo:wktLiteral .
+
+
+goo:BrowardCountyFL a goo:County ;
+    rdfs:label      "Broward County, Florida"@en ;
+    owl:sameAs      dbr:Broward_County%2C_Florida , wd:Q494624 ;
+    geo:lat         "26.193535"^^xsd:decimal ;
+    geo:long        "-80.476683"^^xsd:decimal ;
+    goo:geoHash     "dhwv08q"^^xsd:string ;
+    geosparql:hasGeometry goo:BrowardCountyFLGeom .
+
+goo:BrowardCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-80.87916666667496 25.958333333333563, -80.07500000000903 25.958333333333563, -80.07500000000903 26.333333333333540, -80.87916666667496 26.333333333333540, -80.87916666667496 25.958333333333563))"^^geo:wktLiteral .
+
+
+goo:CalhounCountyFL a goo:County ;
+    rdfs:label      "Calhoun County, Florida"@en ;
+    owl:sameAs      dbr:Calhoun_County%2C_Florida , wd:Q174913 ;
+    geo:lat         "30.388801"^^xsd:decimal ;
+    geo:long        "-85.197915"^^xsd:decimal ;
+    goo:geoHash     "dj7kvk0"^^xsd:string ;
+    geosparql:hasGeometry goo:CalhounCountyFLGeom .
+
+goo:CalhounCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-85.3875000000042 30.19999999999374, -84.9375000000046 30.19999999999374, -84.9375000000046 30.604166666660383, -85.3875000000042 30.604166666660383, -85.3875000000042 30.19999999999374))"^^geo:wktLiteral .
+
+
+goo:CharlotteCountyFL a goo:County ;
+    rdfs:label      "Charlotte County, Florida"@en ;
+    owl:sameAs      dbr:Charlotte_County%2C_Florida , wd:Q488499 ;
+    geo:lat         "26.868974"^^xsd:decimal ;
+    geo:long        "-81.941278"^^xsd:decimal ;
+    goo:geoHash     "dhv8z7k"^^xsd:string ;
+    geosparql:hasGeometry goo:CharlotteCountyFLGeom .
+
+goo:CharlotteCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-82.37083333334027 26.76666666666685, -81.56666666667434 26.76666666666685, -81.56666666667434 27.0458333333335, -82.37083333334027 27.0458333333335, -82.37083333334027 26.76666666666685))"^^geo:wktLiteral .
+
+
+goo:CitrusCountyFL a goo:County ;
+    rdfs:label      "Citrus County, Florida"@en ;
+    owl:sameAs      dbr:Citrus_County%2C_Florida , wd:Q488821 ;
+    geo:lat         "28.843640"^^xsd:decimal ;
+    geo:long        "-82.524810"^^xsd:decimal ;
+    goo:geoHash     "djjk44g"^^xsd:string ;
+    geosparql:hasGeometry goo:CitrusCountyFLGeom .
+
+goo:CitrusCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-82.7833333333399 28.666666666666742, -82.17083333334045 28.666666666666742, -82.17083333334045 29.050000000000054, -82.7833333333399 29.050000000000054, -82.7833333333399 28.666666666666742))"^^geo:wktLiteral .
+
+
+goo:ClayCountyFL a goo:County ;
+    rdfs:label      "Clay County, Florida"@en ;
+    owl:sameAs      dbr:Clay_County%2C_Florida , wd:Q488853 ;
+    geo:lat         "29.986584"^^xsd:decimal ;
+    geo:long        "-81.865036"^^xsd:decimal ;
+    goo:geoHash     "djmf94g"^^xsd:string ;
+    geosparql:hasGeometry goo:ClayCountyFLGeom .
+    
+goo:ClayCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-82.04583333334057 29.72083333333335, -81.57916666667433 29.72083333333335, -81.57916666667433 30.0, -82.04583333334057 30.0, -82.04583333334057 29.72083333333335))"^^geo:wktLiteral .
+
+
+goo:CollierCountyFL a goo:County ;
+    rdfs:label      "Collier County, Florida"@en ;
+    owl:sameAs      dbr:Collier_County%2C_Florida , wd:Q488531 ;
+    geo:lat         "26.118786"^^xsd:decimal ;
+    geo:long        "-81.400955"^^xsd:decimal ;
+    goo:geoHash     "dhwhedv"^^xsd:string ;
+    geosparql:hasGeometry goo:CollierCountyFLGeom .
+
+goo:CollierCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-81.84166666667409 25.795833333333572, -80.8750000000083 25.795833333333572, -80.8750000000083 26.516666666666865, -81.84166666667409 26.516666666666865, -81.84166666667409 25.795833333333572))"^^geo:wktLiteral .
+
+
+goo:ColumbiaCountyFL a goo:County ;
+    rdfs:label      "Columbia County, Florida"@en ;
+    owl:sameAs      dbr:Columbia_County%2C_Florida , wd:Q173867 ;
+    geo:lat         "30.221651"^^xsd:decimal ;
+    geo:long        "-82.623371"^^xsd:decimal ;
+    goo:geoHash     "djm5zve"^^xsd:string ;
+    geosparql:hasGeometry goo:ColumbiaCountyFLGeom .
+
+goo:ColumbiaCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-82.79166666667322 30.004166666660417, -82.45416666667353 30.004166666660417, -82.45416666667353 30.59583333332705, -82.79166666667322 30.59583333332705, -82.79166666667322 30.004166666660417))"^^geo:wktLiteral .
+
+
+goo:DeSotoCountyFL a goo:County ;
+    rdfs:label      "DeSoto County, Florida"@en ;
+    owl:sameAs      dbr:DeSoto_County%2C_Florida , wd:Q488796 ;
+    geo:lat         "27.190581"^^xsd:decimal ;
+    geo:long        "-81.806253"^^xsd:decimal ;
+    goo:geoHash     "dhvfdmy"^^xsd:string ;
+    geosparql:hasGeometry goo:DeSotoCountyFLGeom .
+
+goo:DeSotoCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-82.0541666666739 27.033333333333502, -81.56666666667434 27.033333333333502, -81.56666666667434 27.33750000000015, -82.0541666666739 27.33750000000015, -82.0541666666739 27.033333333333502))"^^geo:wktLiteral .
+
+
+goo:DixieCountyFL a goo:County ;
+    rdfs:label      "Dixie County, Florida"@en ;
+    owl:sameAs      dbr:Dixie_County%2C_Florida , wd:Q488805 ;
+    geo:lat         "29.580899"^^xsd:decimal ;
+    geo:long        "-83.195666"^^xsd:decimal ;
+    goo:geoHash     "djkb6c4"^^xsd:string ;
+    geosparql:hasGeometry goo:DixieCountyFLGeom .
+
+goo:DixieCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-83.40833333333933 29.30000000000004, -82.92083333333977 29.30000000000004, -82.92083333333977 29.82500000000001, -83.40833333333933 29.82500000000001, -83.40833333333933 29.30000000000004))"^^geo:wktLiteral .
+
+
+goo:DuvalCountyFL a goo:County ;
+    rdfs:label      "Duval County, Florida"@en ;
+    owl:sameAs      dbr:Duval_County%2C_Florida , wd:Q493605 ;
+    geo:lat         "30.335245"^^xsd:decimal ;
+    geo:long        "-81.648113"^^xsd:decimal ;
+    goo:geoHash     "djmuw43"^^xsd:string ;
+    geosparql:hasGeometry goo:DuvalCountyFLGeom .
+
+goo:DuvalCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-82.04583333334057 30.10416666666041, -81.37916666667451 30.10416666666041, -81.37916666667451 30.58333333332705, -82.04583333334057 30.58333333332705, -82.04583333334057 30.10416666666041))"^^geo:wktLiteral .
+
+
+goo:EscambiaCountyFL a goo:County ;
+    rdfs:label      "Escambia County, Florida"@en ;
+    owl:sameAs      dbr:Escambia_County%2C_Florida , wd:Q156643 ;
+    geo:lat         "30.611638"^^xsd:decimal ;
+    geo:long        "-87.338900"^^xsd:decimal ;
+    goo:geoHash     "dj3yhs9"^^xsd:string ;
+    geosparql:hasGeometry goo:EscambiaCountyFLGeom .
+
+goo:EscambiaCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-87.63333333333549 30.274999999993735, -86.85416666666953 30.274999999993735, -86.85416666666953 30.999999999993694, -87.63333333333549 30.999999999993694, -87.63333333333549 30.274999999993735))"^^geo:wktLiteral .
+
+goo:FlaglerCountyFL a goo:County ;
+    rdfs:label      "Flagler County, Florida"@en ;
+    owl:sameAs      dbr:Flagler_County%2C_Florida , wd:Q386885 ;
+    geo:lat         "29.474891"^^xsd:decimal ;
+    geo:long        "-81.286253"^^xsd:decimal ;
+    goo:geoHash     "djnpwm9"^^xsd:string ;
+    geosparql:hasGeometry goo:FlaglerCountyFLGeom .
+
+goo:FlaglerCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-81.52083333334105 29.262500000000042, -81.10416666667476 29.262500000000042, -81.10416666667476 29.666666666666686, -81.52083333334105 29.666666666666686, -81.52083333334105 29.262500000000042))"^^geo:wktLiteral .
+
+goo:FranklinCountyFL a goo:County ;
+    rdfs:label      "Franklin County, Florida"@en ;
+    owl:sameAs      dbr:Franklin_County%2C_Florida , wd:Q488813 ;
+    geo:lat         "29.810176"^^xsd:decimal ;
+    geo:long        "-84.799174"^^xsd:decimal ;
+    goo:geoHash     "dj79w6g"^^xsd:string ;
+    geosparql:hasGeometry goo:FranklinCountyFLGeom .
+
+goo:FranklinCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-85.22083333333768 29.59166666666669, -84.33750000000515 29.59166666666669, -84.33750000000515 30.00000000000000, -85.22083333333768 30.00000000000000, -85.22083333333768 29.59166666666669))"^^geo:wktLiteral .
+
+
+goo:GadsdenCountyFL a goo:County ;
+    rdfs:label      "Gadsden County, Florida"@en ;
+    owl:sameAs      dbr:Gadsden_County%2C_Florida , wd:Q501848 ;
+    geo:lat         "30.578687"^^xsd:decimal ;
+    geo:long        "-84.612607"^^xsd:decimal ;
+    goo:geoHash     "dj7vfwd"^^xsd:string ;
+    geosparql:hasGeometry goo:GadsdenCountyFLGeom .
+
+goo:GadsdenCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-84.92916666667128 30.391666666660395, -84.28750000000520 30.391666666660395, -84.28750000000520 30.708333333327044, -84.92916666667128 30.708333333327044, -84.92916666667128 30.391666666660395))"^^geo:wktLiteral .
+
+goo:GilchristCountyFL a goo:County ;
+    rdfs:label      "Gilchrist County, Florida"@en ;
+    owl:sameAs      dbr:Gilchrist_County%2C_Florida , wd:Q111720 ;
+    geo:lat         "29.723456"^^xsd:decimal ;
+    geo:long        "-82.795801"^^xsd:decimal ;
+    goo:geoHash     "djm15fv"^^xsd:string ;
+    geosparql:hasGeometry goo:GilchristCountyFLGeom .
+
+goo:GilchristCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-82.97083333333973 29.56666666666669, -82.65833333334001 29.56666666666669, -82.65833333334001 29.933333333333337, -82.97083333333973 29.933333333333337, -82.97083333333973 29.56666666666669))"^^geo:wktLiteral .
+
+
+goo:GladesCountyFL a goo:County ;
+    rdfs:label      "Glades County, Florida"@en ;
+    owl:sameAs      dbr:Glades_County%2C_Florida , wd:Q488468 ;
+    geo:lat         "26.954810"^^xsd:decimal ;
+    geo:long        "-81.190820"^^xsd:decimal ;
+    goo:geoHash     "dhy326y"^^xsd:string ;
+    geosparql:hasGeometry goo:GladesCountyFLGeom .
+
+goo:GladesCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-81.56250000000767 26.770833333333517, -80.87083333334164 26.770833333333517, -80.87083333334164 27.208333333333492, -81.56250000000767 27.208333333333492, -81.56250000000767 26.770833333333517))"^^geo:wktLiteral .
+
+
+goo:GulfCountyFL a goo:County ;
+    rdfs:label      "Gulf County, Florida"@en ;
+    owl:sameAs      dbr:Gulf_County%2C_Florida , wd:Q488461 ;
+    geo:lat         "29.907257"^^xsd:decimal ;
+    geo:long        "-85.256537"^^xsd:decimal ;
+    goo:geoHash     "dj765uq"^^xsd:string ;
+    geosparql:hasGeometry goo:GulfCountyFLGeom .
+
+goo:GulfCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-85.41666666667084 29.666666666666686, -85.01666666667120 29.666666666666686, -85.01666666667120 30.00000000000000, -85.41666666667084 30.00000000000000, -85.41666666667084 29.666666666666686))"^^geo:wktLiteral .
+
+
+goo:HamiltonCountyFL a goo:County ;
+    rdfs:label      "Hamilton County, Florida"@en ;
+    owl:sameAs      dbr:Hamilton_County%2C_Florida , wd:Q257311 ;
+    geo:lat         "30.491187"^^xsd:decimal ;
+    geo:long        "-82.951071"^^xsd:decimal ;
+    goo:geoHash     "djmj2qu"^^xsd:string ;
+    geosparql:hasGeometry goo:HamiltonCountyFLGeom .
+
+goo:HamiltonCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-83.29166666667277 30.320833333327066, -82.65000000000668 30.320833333327066, -82.65000000000668 30.62916666666038, -83.29166666667277 30.62916666666038, -83.29166666667277 30.320833333327066))"^^geo:wktLiteral .
+
+
+goo:HardeeCountyFL a goo:County ;
+    rdfs:label      "Hardee County, Florida"@en ;
+    owl:sameAs      dbr:Hardee_County%2C_Florida , wd:Q488792 ;
+    geo:lat         "27.492846"^^xsd:decimal ;
+    geo:long        "-81.821580"^^xsd:decimal ;
+    goo:geoHash     "dhvu6hg"^^xsd:string ;
+    geosparql:hasGeometry goo:HardeeCountyFLGeom .
+
+goo:HardeeCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-82.0541666666739 27.33750000000015, -81.56666666667434 27.33750000000015, -81.56666666667434 27.645833333333467, -82.0541666666739 27.645833333333467, -82.0541666666739 27.33750000000015))"^^geo:wktLiteral .
+
+
+goo:HendryCountyFL a goo:County ;
+    rdfs:label      "Hendry County, Florida"@en ;
+    owl:sameAs      dbr:Hendry_County%2C_Florida , wd:Q488488 ;
+    geo:lat         "26.539967"^^xsd:decimal ;
+    geo:long        "-81.152114"^^xsd:decimal ;
+    goo:geoHash     "dhwqcr6"^^xsd:string ;
+    geosparql:hasGeometry goo:HendryCountyFLGeom .
+
+goo:HendryCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-81.56666666667434 26.25416666666688, -80.88333333334162 26.25416666666688, -80.88333333334162 26.950000000000173, -81.56666666667434 26.950000000000173, -81.56666666667434 26.25416666666688))"^^geo:wktLiteral .
+
+
+goo:HernandoCountyFL a goo:County ;
+    rdfs:label      "Hernando County, Florida"@en ;
+    owl:sameAs      dbr:Hernando_County%2C_Florida , wd:Q488572 ;
+    geo:lat         "28.573043"^^xsd:decimal ;
+    geo:long        "-82.466227"^^xsd:decimal ;
+    goo:geoHash     "djj6e3t"^^xsd:string ;
+    geosparql:hasGeometry goo:HernandoCountyFLGeom .
+
+goo:HernandoCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-82.68750000000665 28.433333333333422, -82.05833333334056 28.433333333333422, -82.05833333334056 28.69166666666674, -82.68750000000665 28.69166666666674, -82.68750000000665 28.433333333333422))"^^geo:wktLiteral .
+
+
+goo:HighlandsCountyFL a goo:County ;
+    rdfs:label      "Highlands County, Florida"@en ;
+    owl:sameAs      dbr:Highlands_County%2C_Florida , wd:Q488885 ;
+    geo:lat         "27.341080"^^xsd:decimal ;
+    geo:long        "-81.342353"^^xsd:decimal ;
+    goo:geoHash     "dhy5t12"^^xsd:string ;
+    geosparql:hasGeometry goo:HighlandsCountyFLGeom .
+
+goo:HighlandsCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-81.56250000000767 27.033333333333502, -80.94583333334157 27.033333333333502, -80.94583333334157 27.645833333333467, -81.56250000000767 27.645833333333467, -81.56250000000767 27.033333333333502))"^^geo:wktLiteral .
+
+
+goo:HillsboroughCountyFL a goo:County ;
+    rdfs:label      "Hillsborough County, Florida"@en ;
+    owl:sameAs      dbr:Hillsborough_County%2C_Florida , wd:Q488874 ;
+    geo:lat         "27.906607"^^xsd:decimal ;
+    geo:long        "-82.349719"^^xsd:decimal ;
+    goo:geoHash     "dhvqy04"^^xsd:string ;
+    geosparql:hasGeometry goo:HillsboroughCountyFLGeom .
+
+goo:HillsboroughCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-82.76250000000658 27.58333333333347, -82.05833333334056 27.58333333333347, -82.05833333334056 28.170833333333437, -82.76250000000658 28.170833333333437, -82.76250000000658 27.58333333333347))"^^geo:wktLiteral .
+
+
+goo:HolmesCountyFL a goo:County ;
+    rdfs:label      "Holmes County, Florida"@en ;
+    owl:sameAs      dbr:Holmes_County%2C_Florida , wd:Q488879 ;
+    geo:lat         "30.862007"^^xsd:decimal ;
+    geo:long        "-85.815939"^^xsd:decimal ;
+    goo:geoHash     "dj6zx4q"^^xsd:string ;
+    geosparql:hasGeometry goo:HolmesCountyFLGeom .
+
+goo:HolmesCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-86.0375000000036 30.704166666660377, -85.50000000000409 30.704166666660377, -85.50000000000409 30.995833333327028, -86.0375000000036 30.995833333327028, -86.0375000000036 30.704166666660377))"^^geo:wktLiteral .
+
+
+goo:IndianRiverCountyFL a goo:County ;
+    rdfs:label      "Indian River County, Florida"@en ;
+    owl:sameAs      dbr:Indian_River_County%2C_Florida , wd:Q488528 ;
+    geo:lat         "27.700528"^^xsd:decimal ;
+    geo:long        "-80.574789"^^xsd:decimal ;
+    goo:geoHash     "dhytw6x"^^xsd:string ;
+    geosparql:hasGeometry goo:IndianRiverCountyFLGeom .
+
+goo:IndianRiverCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-80.87916666667496 27.558333333333472, -80.3250000000088 27.558333333333472, -80.3250000000088 27.85416666666679, -80.87916666667496 27.85416666666679, -80.87916666667496 27.558333333333472))"^^geo:wktLiteral .
+
+
+goo:JacksonCountyFL a goo:County ;
+    rdfs:label      "Jackson County, Florida"@en ;
+    owl:sameAs      dbr:Jackson_County%2C_Florida , wd:Q488537 ;
+    geo:lat         "30.789249"^^xsd:decimal ;
+    geo:long        "-85.208814"^^xsd:decimal ;
+    goo:geoHash     "dj7rjj0"^^xsd:string ;
+    geosparql:hasGeometry goo:JacksonCountyFLGeom .
+
+goo:JacksonCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-85.59583333333734 30.566666666660385, -84.86250000000467 30.566666666660385, -84.86250000000467 30.999999999993694, -85.59583333333734 30.999999999993694, -85.59583333333734 30.566666666660385))"^^geo:wktLiteral .
+
+
+goo:JeffersonCountyFL a goo:County ;
+    rdfs:label      "Jefferson County, Florida"@en ;
+    owl:sameAs      dbr:Jefferson_County%2C_Florida , wd:Q488859 ;
+    geo:lat         "30.424558"^^xsd:decimal ;
+    geo:long        "-83.890859"^^xsd:decimal ;
+    goo:geoHash     "djkm548"^^xsd:string ;
+    geosparql:hasGeometry goo:JeffersonCountyFLGeom .
+
+goo:JeffersonCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-84.07500000000539 30.08333333332708, -83.60833333333915 30.08333333332708, -83.60833333333915 30.670833333327046, -84.07500000000539 30.670833333327046, -84.07500000000539 30.08333333332708))"^^geo:wktLiteral .
+
+
+goo:LafayetteCountyFL a goo:County ;
+    rdfs:label      "Lafayette County, Florida"@en ;
+    owl:sameAs      dbr:Lafayette_County%2C_Florida , wd:Q488810 ;
+    geo:lat         "29.990066"^^xsd:decimal ;
+    geo:long        "-83.178510"^^xsd:decimal ;
+    goo:geoHash     "djkfe5x"^^xsd:string ;
+    geosparql:hasGeometry goo:LafayetteCountyFLGeom .
+
+goo:LafayetteCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-83.3666666666727 30.004166666660417, -82.97916666667305 30.004166666660417, -82.97916666667305 30.25833333332707, -83.3666666666727 30.25833333332707, -83.3666666666727 30.004166666660417))"^^geo:wktLiteral .
+
+
+goo:LakeCountyFL a goo:County ;
+    rdfs:label      "Lake County, Florida"@en ;
+    owl:sameAs      dbr:Lake_County%2C_Florida , wd:Q501029 ;
+    geo:lat         "28.764113"^^xsd:decimal ;
+    geo:long        "-81.712282"^^xsd:decimal ;
+    goo:geoHash     "djjgss6"^^xsd:string ;
+    geosparql:hasGeometry goo:LakeCountyFLGeom .
+
+goo:LakeCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-81.95416666667398 28.345833333333427, -81.35416666667453 28.345833333333427, -81.35416666667453 29.320833333333372, -81.95416666667398 29.320833333333372, -81.95416666667398 28.345833333333427))"^^geo:wktLiteral .
+
+
+goo:LeeCountyFL a goo:County ;
+    rdfs:label      "Lee County, Florida"@en ;
+    owl:sameAs      dbr:Lee_County%2C_Florida , wd:Q494616 ;
+    geo:lat         "26.559035"^^xsd:decimal ;
+    geo:long        "-81.891994"^^xsd:decimal ;
+    goo:geoHash      "dhtz0db"^^xsd:string ;
+    geosparql:hasGeometry goo:LeeCountyFLGeom .
+
+goo:LeeCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-82.27083333334036 26.316666666666876, -81.56250000000767 26.316666666666876, -81.56250000000767 26.787500000000183, -82.27083333334036 26.787500000000183, -82.27083333334036 26.316666666666876))"^^geo:wktLiteral .
+
+
+goo:LeonCountyFL a goo:County ;
+    rdfs:label      "Leon County, Florida"@en ;
+    owl:sameAs      dbr:Leon_County%2C_Florida , wd:Q488576 ;
+    geo:lat         "30.459310"^^xsd:decimal ;
+    geo:long        "-84.277800"^^xsd:decimal ;
+    goo:geoHash     "djkj60y"^^xsd:string ;
+    geosparql:hasGeometry goo:LeonCountyFLGeom .
+
+goo:LeonCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-84.70833333333815 30.274999999993735, -83.97916666667214 30.274999999993735, -83.97916666667214 30.683333333327045, -84.70833333333815 30.683333333327045, -84.70833333333815 30.274999999993735))"^^geo:wktLiteral .
+
+
+goo:LevyCountyFL a goo:County ;
+    rdfs:label      "Levy County, Florida"@en ;
+    owl:sameAs      dbr:Levy_County%2C_Florida , wd:Q501022 ;
+    geo:lat         "29.284457"^^xsd:decimal ;
+    geo:long        "-82.783462"^^xsd:decimal ;
+    goo:geoHash     "djjns5n"^^xsd:string ;
+    geosparql:hasGeometry goo:LevyCountyFLGeom .
+
+goo:LevyCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-83.18333333333953 28.99583333333339, -82.40416666667358 28.99583333333339, -82.40416666667358 29.587500000000023, -83.18333333333953 29.587500000000023, -83.18333333333953 28.99583333333339))"^^geo:wktLiteral .
+
+
+goo:LibertyCountyFL a goo:County ;
+    rdfs:label      "Liberty County, Florida"@en ;
+    owl:sameAs      dbr:Liberty_County%2C_Florida , wd:Q255943 ;
+    geo:lat         "30.259849"^^xsd:decimal ;
+    geo:long        "-84.868580"^^xsd:decimal ;
+    goo:geoHash     "dj7shu8"^^xsd:string ;
+    geosparql:hasGeometry goo:LibertyCountyFLGeom .
+
+goo:LibertyCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-85.15000000000441 30.004166666660417, -84.54583333333830 30.004166666660417, -84.54583333333830 30.604166666660383, -85.15000000000441 30.604166666660383, -85.15000000000441 30.004166666660417))"^^geo:wktLiteral .
+
+
+goo:MadisonCountyFL a goo:County ;
+    rdfs:label      "Madison County, Florida"@en ;
+    owl:sameAs      dbr:Madison_County%2C_Florida , wd:Q494463 ;
+    geo:lat         "30.447233"^^xsd:decimal ;
+    geo:long        "-83.470416"^^xsd:decimal ;
+    goo:geoHash     "djkthwd"^^xsd:string ;
+    geosparql:hasGeometry goo:MadisonCountyFLGeom .
+
+goo:MadisonCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-83.81666666667229 30.262499999993736, -83.17500000000621 30.262499999993736, -83.17500000000621 30.649999999993714, -83.81666666667229 30.649999999993714, -83.81666666667229 30.262499999993736))"^^geo:wktLiteral .
+
+
+goo:ManateeCountyFL a goo:County ;
+    rdfs:label      "Manatee County, Florida"@en ;
+    owl:sameAs      dbr:Manatee_County%2C_Florida , wd:Q262708 ;
+    geo:lat         "27.481682"^^xsd:decimal ;
+    geo:long        "-82.368767"^^xsd:decimal ;
+    goo:geoHash     "dhvkmdu"^^xsd:string ;
+    geosparql:hasGeometry goo:ManateeCountyFLGeom .
+
+goo:ManateeCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-82.74166666667327 27.208333333333492, -82.05833333334056 27.208333333333492, -82.05833333334056 27.645833333333467, -82.74166666667327 27.645833333333467, -82.74166666667327 27.208333333333492))"^^geo:wktLiteral .
+
+
+goo:MarionCountyFL a goo:County ;
+    rdfs:label      "Marion County, Florida"@en ;
+    owl:sameAs      dbr:Marion_County%2C_Florida , wd:Q501014 ;
+    geo:lat         "29.202805"^^xsd:decimal ;
+    geo:long        "-82.043100"^^xsd:decimal ;
+    goo:geoHash     "djjwjh4"^^xsd:string ;
+    geosparql:hasGeometry goo:MarionCountyFLGeom .
+
+goo:MarionCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-82.53333333334012 28.962500000000060, -81.64166666667427 28.962500000000060, -81.64166666667427 29.520833333333360, -82.53333333334012 29.520833333333360, -82.53333333334012 28.962500000000060))"^^geo:wktLiteral .
+
+
+goo:MartinCountyFL a goo:County ;
+    rdfs:label      "Martin County, Florida"@en ;
+    owl:sameAs      dbr:Martin_County%2C_Florida , wd:Q648752 ;
+    geo:lat         "27.083604"^^xsd:decimal ;
+    geo:long        "-80.398201"^^xsd:decimal ;
+    goo:geoHash     "dhyf46r"^^xsd:string ;
+    geosparql:hasGeometry goo:MartinCountyFLGeom .
+
+goo:MartinCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-80.87916666667496 26.958333333333506, -80.08333333334235 26.958333333333506, -80.08333333334235 27.262500000000156, -80.87916666667496 27.262500000000156, -80.87916666667496 26.958333333333506))"^^geo:wktLiteral .
+
+
+goo:MiamiDadeCountyFL a goo:County ;
+    rdfs:label      "Miami-Dade County, Florida"@en ;
+    owl:sameAs      dbr:Miami-Dade_County%2C_Florida , wd:Q468557 ;
+    geo:lat         "25.610580"^^xsd:decimal ;
+    geo:long        "-80.497099"^^xsd:decimal ;
+    goo:geoHash     "dhwc8nr"^^xsd:string ;
+    geosparql:hasGeometry goo:MiamiDadeCountyFLGeom .
+
+goo:MiamiDadeCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-80.8750000000083 25.141666666666943, -80.12083333334232 25.141666666666943, -80.12083333334232 25.979166666666895, -80.8750000000083 25.979166666666895, -80.8750000000083 25.141666666666943))"^^geo:wktLiteral .
+
+
+goo:MonroeCountyFL a goo:County ;
+    rdfs:label      "Monroe County, Florida"@en ;
+    owl:sameAs      dbr:Monroe_County%2C_Florida , wd:Q263742 ;
+    geo:lat         "24.768883"^^xsd:decimal ;
+    geo:long        "-80.953270"^^xsd:decimal ;
+    goo:geoHash     "dhqkvv5"^^xsd:string ;
+    geosparql:hasGeometry goo:MonroeCountyFLGeom .
+
+goo:MonroeCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-82.92500000000643 24.52500000000031, -80.2458333333422 24.52500000000031, -80.2458333333422 25.804166666666905, -82.92500000000643 25.804166666666905, -82.92500000000643 24.52500000000031))"^^geo:wktLiteral .
+
+
+goo:NassauCountyFL a goo:County ;
+    rdfs:label      "Nassau County, Florida"@en ;
+    owl:sameAs      dbr:Nassau_County%2C_Florida , wd:Q488818 ;
+    geo:lat         "30.605963"^^xsd:decimal ;
+    geo:long        "-81.765087"^^xsd:decimal ;
+    goo:geoHash     "djmy57s"^^xsd:string ;
+    geosparql:hasGeometry goo:NassauCountyFLGeom .
+
+goo:NassauCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-82.05000000000723 30.2791666666604, -81.40416666667448 30.2791666666604, -81.40416666667448 30.82916666666037, -82.05000000000723 30.82916666666037, -82.05000000000723 30.2791666666604))"^^geo:wktLiteral .
+
+
+goo:OkaloosaCountyFL a goo:County ;
+    rdfs:label      "Okaloosa County, Florida"@en ;
+    owl:sameAs      dbr:Okaloosa_County%2C_Florida , wd:Q494476 ;
+    geo:lat         "30.665851"^^xsd:decimal ;
+    geo:long        "-86.594187"^^xsd:decimal ;
+    goo:geoHash     "dj6qmw8"^^xsd:string ;
+    geosparql:hasGeometry goo:OkaloosaCountyFLGeom .
+
+goo:OkaloosaCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-86.85000000000286 30.383333333327062, -86.39166666666995 30.383333333327062, -86.39166666666995 30.999999999993694, -86.85000000000286 30.999999999993694, -86.85000000000286 30.383333333327062))"^^geo:wktLiteral .
+
+
+goo:OkeechobeeCountyFL a goo:County ;
+    rdfs:label      "Okeechobee County, Florida"@en ;
+    owl:sameAs      dbr:Okeechobee_County%2C_Florida , wd:Q501123 ;
+    geo:lat         "27.385592"^^xsd:decimal ;
+    geo:long        "-80.887388"^^xsd:decimal ;
+    goo:geoHash     "dhy7z37"^^xsd:string ;
+    geosparql:hasGeometry goo:OkeechobeeCountyFLGeom .
+
+goo:OkeechobeeCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-81.20833333334133 26.962500000000173, -80.67916666667514 26.962500000000173, -80.67916666667514 27.6416666666668, -81.20833333334133 27.6416666666668, -81.20833333334133 26.962500000000173))"^^geo:wktLiteral .
+
+
+goo:OrangeCountyFL a goo:County ;
+    rdfs:label      "Orange County, Florida"@en ;
+    owl:sameAs      dbr:Orange_County%2C_Florida , wd:Q488543 ;
+    geo:lat         "28.514391"^^xsd:decimal ;
+    geo:long        "-81.323284"^^xsd:decimal ;
+    goo:geoHash     "djn4jqy"^^xsd:string ;
+    geosparql:hasGeometry goo:OrangeCountyFLGeom .
+
+goo:OrangeCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-81.65833333334092 28.350000000000094, -80.86666666667497 28.350000000000094, -80.86666666667497 28.783333333333402, -81.65833333334092 28.783333333333402, -81.65833333334092 28.350000000000094))"^^geo:wktLiteral .
+
+
+goo:OsceolaCountyFL a goo:County ;
+    rdfs:label      "Osceola County, Florida"@en ;
+    owl:sameAs      dbr:Osceola_County%2C_Florida , wd:Q501067 ;
+    geo:lat         "28.059027"^^xsd:decimal ;
+    geo:long        "-81.139312"^^xsd:decimal ;
+    goo:geoHash     "dhyr9eu"^^xsd:string ;
+    geosparql:hasGeometry goo:OsceolaCountyFLGeom .
+
+goo:OsceolaCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-81.65416666667426 27.645833333333467, -80.86250000000831 27.645833333333467, -80.86250000000831 28.345833333333427, -81.65416666667426 28.345833333333427, -81.65416666667426 27.645833333333467))"^^geo:wktLiteral .
+
+
+goo:PalmBeachCountyFL a goo:County ;
+    rdfs:label      "Palm Beach County, Florida"@en ;
+    owl:sameAs      dbr:Palm_Beach_County%2C_Florida , wd:Q484294 ;
+    geo:lat         "26.649126"^^xsd:decimal ;
+    geo:long        "-80.448354"^^xsd:decimal ;
+    goo:geoHash     "dhwz977"^^xsd:string ;
+    geosparql:hasGeometry goo:PalmBeachCountyFLGeom .
+
+goo:PalmBeachCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-80.88333333334162 26.320833333333542, -80.03333333334240 26.320833333333542, -80.03333333334240 26.970833333333506, -80.88333333334162 26.970833333333506, -80.88333333334162 26.320833333333542))"^^geo:wktLiteral .
+
+
+goo:PascoCountyFL a goo:County ;
+    rdfs:label      "Pasco County, Florida"@en ;
+    owl:sameAs      dbr:Pasco_County%2C_Florida , wd:Q500992 ;
+    geo:lat         "28.307711"^^xsd:decimal ;
+    geo:long        "-82.464832"^^xsd:decimal ;
+    goo:geoHash     "djj353q"^^xsd:string ;
+    geosparql:hasGeometry goo:PascoCountyFLGeom .
+
+goo:PascoCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-82.85000000000650 28.170833333333437, -82.05833333334056 28.170833333333437, -82.05833333334056 28.475000000000087, -82.85000000000650 28.475000000000087, -82.85000000000650 28.170833333333437))"^^geo:wktLiteral .
+
+
+goo:PinellasCountyFL a goo:County ;
+    rdfs:label      "Pinellas County, Florida"@en ;
+    owl:sameAs      dbr:Pinellas_County%2C_Florida , wd:Q494556 ;
+    geo:lat         "27.903108"^^xsd:decimal ;
+    geo:long        "-82.739519"^^xsd:decimal ;
+    goo:geoHash     "dhvntpw"^^xsd:string ;
+    geosparql:hasGeometry goo:PinellasCountyFLGeom .
+
+goo:PinellasCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-82.85000000000650 27.612500000000136, -82.58333333334008 27.612500000000136, -82.58333333334008 28.170833333333437, -82.85000000000650 28.170833333333437, -82.85000000000650 27.612500000000136))"^^geo:wktLiteral .
+
+
+goo:PolkCountyFL a goo:County ;
+    rdfs:label      "Polk County, Florida"@en ;
+    owl:sameAs      dbr:Polk_County%2C_Florida , wd:Q501043 ;
+    geo:lat         "27.953649"^^xsd:decimal ;
+    geo:long        "-81.693534"^^xsd:decimal ;
+    goo:geoHash     "dhvzj0b"^^xsd:string ;
+    geosparql:hasGeometry goo:PolkCountyFLGeom .
+
+goo:PolkCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-82.10416666667385 27.645833333333467, -81.1333333333414  27.645833333333467, -81.1333333333414  28.358333333333427, -82.10416666667385 28.358333333333427, -82.10416666667385 27.645833333333467))"^^geo:wktLiteral .
+
+
+goo:PutnamCountyFL a goo:County ;
+    rdfs:label      "Putnam County, Florida"@en ;
+    owl:sameAs      dbr:Putnam_County%2C_Florida , wd:Q503059 ;
+    geo:lat         "29.593896"^^xsd:decimal ;
+    geo:long        "-81.732039"^^xsd:decimal ;
+    goo:geoHash     "djmbk5k"^^xsd:string ;
+    geosparql:hasGeometry goo:PutnamCountyFLGeom .
+
+goo:PutnamCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-82.0541666666739  29.33333333333337, -81.43750000000779 29.33333333333337, -81.43750000000779 29.83750000000001, -82.0541666666739  29.83750000000001, -82.0541666666739  29.33333333333337))"^^geo:wktLiteral .
+
+
+goo:SantaRosaCountyFL a goo:County ;
+    rdfs:label      "Santa Rosa County, Florida"@en ;
+    owl:sameAs      dbr:Santa_Rosa_County%2C_Florida , wd:Q494500 ;
+    geo:lat         "30.701269"^^xsd:decimal ;
+    geo:long        "-87.012890"^^xsd:decimal ;
+    goo:geoHash     "dj6neuz"^^xsd:string ;
+    geosparql:hasGeometry goo:SantaRosaCountyFLGeom .
+
+goo:SantaRosaCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-87.31250000000244 30.345833333327064, -86.78750000000292 30.345833333327064, -86.78750000000292 30.999999999993694, -87.31250000000244 30.999999999993694, -87.31250000000244 30.345833333327064))"^^geo:wktLiteral .
+
+
+goo:SarasotaCountyFL a goo:County ;
+    rdfs:label      "Sarasota County, Florida"@en ;
+    owl:sameAs      dbr:Sarasota_County%2C_Florida , wd:Q501163 ;
+    geo:lat         "27.184386"^^xsd:decimal ;
+    geo:long        "-82.365835"^^xsd:decimal ;
+    goo:geoHash     "dhv6tsz"^^xsd:string ;
+    geosparql:hasGeometry goo:SarasotaCountyFLGeom .
+
+goo:SarasotaCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-82.64166666667336 26.945833333333507, -82.05833333334056 26.945833333333507, -82.05833333334056 27.38750000000015, -82.64166666667336 27.38750000000015, -82.64166666667336 26.945833333333507))"^^geo:wktLiteral .
+
+
+goo:SeminoleCountyFL a goo:County ;
+    rdfs:label      "Seminole County, Florida"@en ;
+    owl:sameAs      dbr:Seminole_County%2C_Florida , wd:Q280596 ;
+    geo:lat         "28.690092"^^xsd:decimal ;
+    geo:long        "-81.131989"^^xsd:decimal ;
+    goo:geoHash     "djn71yc"^^xsd:string ;
+    geosparql:hasGeometry goo:SeminoleCountyFLGeom .
+
+goo:SeminoleCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-81.4583333333411  28.61250000000008, -80.99166666667486 28.61250000000008, -80.99166666667486 28.875000000000064, -81.4583333333411  28.875000000000064, -81.4583333333411  28.61250000000008))"^^geo:wktLiteral .
+
+
+goo:StJohnsCountyFL a goo:County ;
+    rdfs:label      "St. Johns County, Florida"@en ;
+    owl:sameAs      dbr:St._Johns_County%2C_Florida , wd:Q494471 ;
+    geo:lat         "29.890487"^^xsd:decimal ;
+    geo:long        "-81.400040"^^xsd:decimal ;
+    goo:geoHash     "djq459q"^^xsd:string ;
+    geosparql:hasGeometry goo:StJohnsCountyFLGeom .
+
+goo:StJohnsCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-81.63333333334094 29.62500000000002, -81.21666666667466 29.62500000000002, -81.21666666667466 30.0, -81.63333333334094 30.0, -81.63333333334094 29.62500000000002))"^^geo:wktLiteral .
+
+
+goo:StLucieCountyFL a goo:County ;
+    rdfs:label      "St. Lucie County, Florida"@en ;
+    owl:sameAs      dbr:St._Lucie_County%2C_Florida , wd:Q494564 ;
+    geo:lat         "27.379814"^^xsd:decimal ;
+    geo:long        "-80.443536"^^xsd:decimal ;
+    goo:geoHash     "dhygc2q"^^xsd:string ;
+    geosparql:hasGeometry goo:StLucieCountyFLGeom .
+
+goo:StLucieCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-80.67916666667514 27.208333333333492, -80.20416666667558 27.208333333333492, -80.20416666667558 27.558333333333472, -80.67916666667514 27.558333333333472, -80.67916666667514 27.208333333333492))"^^geo:wktLiteral .
+
+
+goo:SumterCountyFL a goo:County ;
+    rdfs:label      "Sumter County, Florida"@en ;
+    owl:sameAs      dbr:Sumter_County%2C_Florida , wd:Q503889 ;
+    geo:lat         "28.714101"^^xsd:decimal ;
+    geo:long        "-82.074347"^^xsd:decimal ;
+    goo:geoHash     "djjek75"^^xsd:string ;
+    geosparql:hasGeometry goo:SumterCountyFLGeom .
+
+goo:SumterCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-82.30833333334033 28.30833333333343, -81.95416666667398 28.30833333333343, -81.95416666667398 28.958333333333393, -82.30833333334033 28.958333333333393, -82.30833333334033 28.30833333333343))"^^geo:wktLiteral .
+
+
+goo:SuwanneeCountyFL a goo:County ;
+    rdfs:label      "Suwannee County, Florida"@en ;
+    owl:sameAs      dbr:Suwannee_County%2C_Florida , wd:Q501036 ;
+    geo:lat         "30.189244"^^xsd:decimal ;
+    geo:long        "-82.992754"^^xsd:decimal ;
+    goo:geoHash     "djkgxry"^^xsd:string ;
+    geosparql:hasGeometry goo:SuwanneeCountyFLGeom .
+
+goo:SuwanneeCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-83.25000000000614 30.004166666660417, -82.79583333333989 30.004166666660417, -82.79583333333989 30.437499999993726, -83.25000000000614 30.437499999993726, -83.25000000000614 30.004166666660417))"^^geo:wktLiteral .
+
+
+goo:TaylorCountyFL a goo:County ;
+    rdfs:label      "Taylor County, Florida"@en ;
+    owl:sameAs      dbr:Taylor_County%2C_Florida , wd:Q503064 ;
+    geo:lat         "30.009908"^^xsd:decimal ;
+    geo:long        "-83.609483"^^xsd:decimal ;
+    goo:geoHash     "djkd9rj"^^xsd:string ;
+    geosparql:hasGeometry goo:TaylorCountyFLGeom .
+
+goo:TaylorCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-83.98750000000547 30.004166666660417, -83.37083333333936 30.004166666660417, -83.37083333333936 30.3041666666604, -83.98750000000547 30.3041666666604, -83.98750000000547 30.004166666660417))"^^geo:wktLiteral .
+
+
+goo:UnionCountyFL a goo:County ;
+    rdfs:label      "Union County, Florida"@en ;
+    owl:sameAs      dbr:Union_County%2C_Florida , wd:Q501078 ;
+    geo:lat         "30.054280"^^xsd:decimal ;
+    geo:long        "-82.366918"^^xsd:decimal ;
+    goo:geoHash     "djm6vxn"^^xsd:string ;
+    geosparql:hasGeometry goo:UnionCountyFLGeom .
+
+goo:UnionCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-82.56666666667343 30.004166666660417, -82.14166666667381 30.004166666660417, -82.14166666667381 30.14166666666041, -82.56666666667343 30.14166666666041, -82.56666666667343 30.004166666660417))"^^geo:wktLiteral .
+
+
+goo:VolusiaCountyFL a goo:County ;
+    rdfs:label      "Volusia County, Florida"@en ;
+    owl:sameAs      dbr:Volusia_County%2C_Florida , wd:Q494541 ;
+    geo:lat         "29.057769"^^xsd:decimal ;
+    geo:long        "-81.161792"^^xsd:decimal ;
+    goo:geoHash     "djnm31g"^^xsd:string ;
+    geosparql:hasGeometry goo:VolusiaCountyFLGeom .
+
+goo:VolusiaCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-81.6375000000076  28.608333333333412, -80.73750000000842 28.608333333333412, -80.73750000000842 29.425000000000033, -81.6375000000076  29.425000000000033, -81.6375000000076  28.608333333333412))"^^geo:wktLiteral .
+
+
+goo:WakullaCountyFL a goo:County ;
+    rdfs:label      "Wakulla County, Florida"@en ;
+    owl:sameAs      dbr:Wakulla_County%2C_Florida , wd:Q505417 ;
+    geo:lat         "30.139432"^^xsd:decimal ;
+    geo:long        "-84.374846"^^xsd:decimal ;
+    goo:geoHash     "djk52n8"^^xsd:string ;
+    geosparql:hasGeometry goo:WakullaCountyFLGeom .
+
+goo:WakullaCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-84.73750000000479 30.004166666660417, -84.07916666667205 30.004166666660417, -84.07916666667205 30.299999999993734, -84.73750000000479 30.299999999993734, -84.73750000000479 30.004166666660417))"^^geo:wktLiteral .
+
+
+goo:WaltonCountyFL a goo:County ;
+    rdfs:label      "Walton County, Florida"@en ;
+    owl:sameAs      dbr:Walton_County%2C_Florida , wd:Q503455 ;
+    geo:lat         "30.631211"^^xsd:decimal ;
+    geo:long        "-86.176614"^^xsd:decimal ;
+    goo:geoHash     "dj6wr00"^^xsd:string ;
+    geosparql:hasGeometry goo:WaltonCountyFLGeom .
+
+goo:WaltonCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-86.39583333333661 30.27083333332707, -85.85416666667044 30.27083333332707, -85.85416666667044 30.99166666666036, -86.39583333333661 30.99166666666036, -86.39583333333661 30.27083333332707))"^^geo:wktLiteral .
+
+
+goo:WashingtonCountyFL a goo:County ;
+    rdfs:label      "Washington County, Florida"@en ;
+    owl:sameAs      dbr:Washington_County%2C_Florida , wd:Q263418 ;
+    geo:lat         "30.602217"^^xsd:decimal ;
+    geo:long        "-85.662797"^^xsd:decimal ;
+    goo:geoHash     "dj7n4dy"^^xsd:string ;
+    geosparql:hasGeometry goo:WashingtonCountyFLGeom .
+
+goo:WashingtonCountyFLGeom a geosparql:Geometry ;
+    geosparql:asWKT "POLYGON((-85.99166666667031 30.391666666660395, -85.43333333333749 30.391666666660395, -85.43333333333749 30.82916666666037, -85.99166666667031 30.82916666666037, -85.99166666667031 30.391666666660395))"^^geo:wktLiteral .
