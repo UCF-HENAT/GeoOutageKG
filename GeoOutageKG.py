@@ -46,7 +46,7 @@ class GeoOutageKG:
         Write OutageRecord class instances to given year file with given dataset.
         """
         g = self.create_graph()
-        data_path = os.path.join(root_dir, f"./eagle-i/24237376/florida_data/eaglei_outages_{year}.csv")
+        data_path = os.path.join(root_dir, f"eagle-i/24237376/florida_data/eaglei_outages_{year}.csv")
         df = pd.read_csv(data_path)
 
         for _, entry in df.iterrows():
