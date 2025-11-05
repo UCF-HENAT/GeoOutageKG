@@ -4,6 +4,7 @@ import json
 import pandas as pd
 from datetime import datetime
 from PIL import Image
+import argparse
 
 from rdflib import Graph, Namespace, URIRef, Literal
 from rdflib.namespace import RDF, RDFS, XSD
@@ -190,21 +191,30 @@ class GeoOutageKG:
 
 # Example usage
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: python GeoOutageKG.py /path/to/root_folder")
-        sys.exit(1)
-    root_dir = sys.argv[1]
+    p = argparse.ArgumentParser()
+    p.add_argument("--root_dir", type=str, required=True)
+    p.add_argument("--fmt", type=str, default="ttl")
+    args = p.parse_args()
+
+    root_dir = args.root_dir
+    fmt = args.fmt
+    if fmt == "turtle":
+        fmt = "ttl"
 
     ntl_dir        = os.path.join(root_dir, "VNP46A2_county_imgs/")
     outage_map_dir = os.path.join(root_dir, "outage_maps/")
     fips_json      = os.path.join(root_dir, "fips_codes.json")
 
     # Create GeoOutageKG instance
-    gokg_write = GeoOutageKG(ntl_dir, outage_map_dir, fips_json, fmt="turtle")
+    gokg_write = GeoOutageKG(ntl_dir, outage_map_dir, fips_json, fmt=fmt)
 
     # Write TTL
     for year in range(2014, 2025):
-        gokg_write.create_outage_records(year, root_dir, out_path=f"outagerecord_{year}.ttl")
-    gokg_write.create_outage_maps(out_path="outagemap.ttl")
-    gokg_write.create_ntl_images(out_path="ntlimage.ttl")
-    
+        gokg_write.create_outage_records(year, root_dir, out_path=f"outagerecord_{year}.{fmt}")
+        print(f"Serialized Outage Records for year {year}.")
+        
+    gokg_write.create_outage_maps(out_path=f"outagemap.{fmt}")
+    print(f"Serialized Outage Maps.")
+
+    gokg_write.create_ntl_images(out_path=f"ntlimage.{fmt}")
+    print(f"Serialized NTL Images.")
