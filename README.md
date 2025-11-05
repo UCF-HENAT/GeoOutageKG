@@ -208,3 +208,28 @@ WHERE {
 ORDER BY DESC(?maxOutages)
 LIMIT 10
 ```
+
+## Citation
+If you would like to reference or utilize GeoOutageKG in your work, we kindly ask that you reference us using the following citation:
+
+```bibtex
+@InProceedings{geooutagekg,
+    author={Frakes, Ethan and Wu, Yinghui and French, Roger H. and Li, Mengjie},
+    editor={Garijo, Daniel and Kirrane, Sabrina and Salatino, Angelo and Shimizu, Cogan and Acosta, Maribel and Nuzzolese, Andrea Giovanni and Ferrada, Sebasti{\'a}n and Soulard, Thibaut and Kozaki, Kouji and Takeda, Hideaki and Gentile, Anna Lisa},
+    title={{GeoOutageKG}: A Multimodal Geospatiotemporal Knowledge Graph for Multiresolution Power Outage Analysis},
+    booktitle={The Semantic Web -- ISWC 2025},
+    year={2025},
+    month={10},
+    publisher={Springer Nature Switzerland},
+    address={Cham},
+    pages={221--239},
+    isbn={978-3-032-09530-5},
+    doi={10.1007/978-3-032-09530-5_13},
+    eprint={2507.22878},
+    eprinttype={arxiv},
+    eprintclass={cs.IR}
+}
+```
+
+## License
+GeoOutageKG is licensed under the [MIT License](./LICENSE).
