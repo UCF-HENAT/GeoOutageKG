@@ -57,12 +57,12 @@ This section covers how to install all appropirate packages for using the provid
     unzip outage_maps.zip
     ```
 
-5. Run GeoOutageKG.py and give root directory as command argument
+5. Run GeoOutageKG.py and give root directory & serialization format as command arguments
     ```
-    python GeoOutageKG.py ./
+    python GeoOutageKG.py --root_dir="./" --fmt="turtle"
     ```
 
-    If necessary, swap './' with root directory containing unzipped VNP46A2_county_imgs/ and outage_maps/ folders.
+    If necessary, swap './' with root directory containing unzipped VNP46A2_county_imgs/ and outage_maps/ folders. Optionally change "turtle" with your format of choice (i.e. xml, jsonld, etc.).
 
 ### SPARQL Endpoint:
 1. Download all .ttl files from https://doi.org/10.17605/OSF.IO/QVD8B
