@@ -6,51 +6,107 @@ import geopandas as gpd
 import os
 import pandas as pd
 import xarray as xr
-from shapely.vectorized import contains
+from shapely import contains_xy
 import numpy as np
 
-bearer = os.getenv('EARTH_DATA_TOKEN')
+# token = os.getenv('EARTH_DATA_TOKEN')
+token = "***REMOVED***"
 usa_gdf = GADMDownloader(version="4.0").get_shape_data_by_country_name(country_name="USA", ad_level=2)
 florida_gdf = usa_gdf[usa_gdf["NAME_1"] == 'Florida']
+florida_poly = florida_gdf.geometry.union_all()
+
+#  3. Load & clip ZCTAs to Florida
+zcta_url = "./tl_2020_us_zcta510.zip"
+zcta_gdf = gpd.read_file(zcta_url)
+
+# ensure both are in the same CRS
+zcta_gdf = zcta_gdf.to_crs(florida_gdf.crs)
+
+# clip to the Florida boundary
+zcta_florida_gdf = gpd.clip(zcta_gdf, florida_poly)
+
 H5_CACHE = os.path.expanduser("./h5_cache/")
 os.makedirs(H5_CACHE, exist_ok=True)
 
-def download_all_counties(product="VNP46A3", date_range=None):
-  county_names = list(florida_gdf["NAME_2"].values)
-  county_names = [name.lower().replace(' ', '_').replace('-', '_') for name in county_names]
-
+def download_all_counties(product="VNP46A3", date_range=None, split_into="county", separate=False):
   freq = 'MS' if product == "VNP46A3" else 'D'
   date_range_pd = pd.date_range(start=date_range[0], end=date_range[1], freq=freq)
+  date_list = [d.date() for d in date_range_pd]
+
+  DATA_PATH = f"./{split_into}_{product}"
 
   # download manager
-  bm = BlackMarbleDownloader(bearer=bearer, directory=H5_CACHE)
+  bm = BlackMarbleDownloader(token=token, directory=H5_CACHE)
 
   # perform downloads
   h5_files = bm.download(
       gdf=florida_gdf,
       product_id=product,        # daily composites
-      date_range=date_range_pd,
-      skip_if_exists=False
+      date_range=date_list,
+      skip_if_exists=True
   )
   
-  for county_name in county_names:
-    try:
-        # select this county's geometry
-      county_gdf = florida_gdf[florida_gdf['NAME_2']
-          .str.lower().str.replace(' ', '_').str.replace('-', '_') == county_name]
-      poly = county_gdf.geometry.union_all()
+  if split_into == "county":
+    county_names = list(florida_gdf["NAME_2"].values)
+    county_names = [name.lower().replace(' ', '_').replace('-', '_') for name in county_names]
+    for county_name in county_names:
+        try:
+                # select this county's geometry
+            county_gdf = florida_gdf[florida_gdf['NAME_2']
+                .str.lower().str.replace(' ', '_').str.replace('-', '_') == county_name]
+            poly = county_gdf.geometry.union_all()
 
-      if product == "VNP46A3":
-        download_county_data_vnp46a3(h5_files, county_name, poly)
-      elif product == "VNP46A2":
-        download_county_data_vnp46a2(h5_files, county_name, poly)
-      else:
-        print("Invalid product given.")
-        return
-    except Exception as e:
-      print(f"Failed on county {county_name}: {e}")
+            if product == "VNP46A3":
+                download_county_data_vnp46a3(h5_files, county_name, poly, DATA_PATH)
+            elif product == "VNP46A2":
+                download_county_data_vnp46a2(h5_files, county_name, poly, DATA_PATH)
+            else:
+                print("Invalid product given.")
+                return
+        except Exception as e:
+            print(f"Failed on county {county_name}: {e}")
 
-def download_county_data_vnp46a2(h5_files, county_name, poly):
+  elif split_into == "zip_code":
+    valid_zip_codes = ['33872', '33870', '33875', '33876', '33857', '33852']
+    zip_codes = sorted(zcta_florida_gdf["ZCTA5CE10"].astype(str).tolist())
+    if separate:
+        for zip_code in zip_codes:
+            if zip_code in valid_zip_codes:
+                try:
+                    # select this zip code's geometry
+                    zip_gdf = zcta_florida_gdf[zcta_florida_gdf["ZCTA5CE10"] == zip_code]
+                    poly = zip_gdf.geometry.union_all()
+
+                    if product == "VNP46A3":
+                        if not os.path.exists(os.path.join(DATA_PATH, zip_code, f"{zip_code}_{date_range_pd.year.values[0]}.pickle")):
+                            download_county_data_vnp46a3(h5_files, zip_code, poly, DATA_PATH)
+                    elif product == "VNP46A2":
+                        download_county_data_vnp46a2(h5_files, zip_code, poly, DATA_PATH)
+                    else:
+                        print("Invalid product given.")
+                        return
+                except Exception as e:
+                    print(f"Failed on zip code {zip_code}: {e}")
+    else:
+        try:
+            combined_zcta_gdf = zcta_florida_gdf[
+                zcta_florida_gdf["ZCTA5CE10"].astype(str).isin(valid_zip_codes)
+            ].copy()
+
+            poly = combined_zcta_gdf.geometry.union_all()
+
+            if product == "VNP46A3":
+                if not os.path.exists(os.path.join(DATA_PATH, "combined", f"combined_{date_range_pd.year.values[0]}.pickle")):
+                        download_county_data_vnp46a3(h5_files, "combined", poly, DATA_PATH)
+            elif product == "VNP46A2":
+                download_county_data_vnp46a2(h5_files, "combined", poly, DATA_PATH)
+            else:
+                print("Invalid product given.")
+                return
+        except Exception as e:
+            print(f"Failed: {e}")
+
+def download_county_data_vnp46a2(h5_files, county_name, poly, DATA_PATH):
   """
   Download daily VNP46A2 data (Gap_Filled_DNB_BRDF-Corrected_NTL) for one Florida county.
 
@@ -59,7 +115,7 @@ def download_county_data_vnp46a2(h5_files, county_name, poly):
       date_range (pd.DatetimeIndex): daily dates to download
   """
 
-  DATA_PATH = "./county_VNP46A2"
+  
   # prepare output directory
   county_path = os.path.join(DATA_PATH, county_name)
   os.makedirs(county_path, exist_ok=True)
@@ -68,10 +124,18 @@ def download_county_data_vnp46a2(h5_files, county_name, poly):
   for h5 in h5_files:
     try:
       print(h5)
+      doy = h5.stem.split('.')[1]
+      time = pd.to_datetime(doy, format="A%Y%j")
+      # save each day separately
+      out_fp = os.path.join(county_path, f"{time.strftime('%Y_%m_%d')}.pickle")
+      if os.path.exists(out_fp):
+          print("Already exists, skipping...")
+          continue
+            
       ds = xr.open_dataset(
           h5,
           engine="h5netcdf",
-          group="HDFEOS/GRIDS/VNP_Grid_DNB/Data Fields/",
+          group="HDFEOS/GRIDS/VIIRS_Grid_DNB_2d/Data Fields/",
           backend_kwargs={"phony_dims": "sort"}
       )
 
@@ -86,8 +150,6 @@ def download_county_data_vnp46a2(h5_files, county_name, poly):
       lat1d = lat[::-1]
       lon1d = lon   # east-west doesn't need flipping
 
-      doy = h5.stem.split('.')[1]
-      time = pd.to_datetime(doy, format="A%Y%j")
       da = ds["Gap_Filled_DNB_BRDF-Corrected_NTL"]
       da = da.rename({
           da.dims[0]: "y",
@@ -98,7 +160,7 @@ def download_county_data_vnp46a2(h5_files, county_name, poly):
               .rename({"y": "latitude", "x": "longitude"})
       
       lon2d, lat2d = np.meshgrid(lon1d, lat1d)
-      mask = contains(poly, lon2d, lat2d)
+      mask = contains_xy(poly, lon2d, lat2d)
       if not mask.any():
           print(f"  → no overlap for {county_name} on {time.strftime('%Y%m%d')}, skipping")
           continue
@@ -112,29 +174,28 @@ def download_county_data_vnp46a2(h5_files, county_name, poly):
       new_size = len(data_bytes)
 
       # save each day separately
-      out_fp = os.path.join(county_path, f"{time.strftime('%Y_%m_%d')}.pickle")
       if os.path.exists(out_fp):
         old_size = os.path.getsize(out_fp)
         if new_size > old_size:
           with open(out_fp, 'wb') as f:
               pickle.dump(da, f)
+          print(f"  → saved {out_fp}")
       else:
         with open(out_fp, 'wb') as f:
             pickle.dump(da, f)
+        print(f"  → saved {out_fp}")
 
     except Exception as e:
       print(f"Failed on file {h5}: {e}")
 
-def download_county_data_vnp46a3(h5_files, county_name, poly):
+def download_county_data_vnp46a3(h5_files, county_name, poly, DATA_PATH):
     """
     Download monthly VNP46A3 data for one Florida county,
     mosaicking all tiles per month into one array before masking.
     """
-    DATA_PATH = "./county_VNP46A3"
     county_path = os.path.join(DATA_PATH, county_name)
     os.makedirs(county_path, exist_ok=True)
     
-
     # 1) Group all files by their month
     files_by_month = {}
     for h5 in h5_files:
@@ -169,6 +230,7 @@ def download_county_data_vnp46a3(h5_files, county_name, poly):
             tile_datasets.append(da.to_dataset())
 
         if not tile_datasets:
+            print("Tile datasets empty")
             continue
 
         # 2) Mosaic all tiles into one Dataset (outer join on lat/lon)
@@ -184,7 +246,7 @@ def download_county_data_vnp46a3(h5_files, county_name, poly):
         # 5) Mask to the county polygon
         lon2d, lat2d = np.meshgrid(mosaic_da.longitude.values,
                                    mosaic_da.latitude.values)
-        mask = contains(poly, lon2d, lat2d)
+        mask = contains_xy(poly, lon2d, lat2d)
         mask_da = xr.DataArray(mask,
                                dims=("latitude", "longitude"),
                                coords={
@@ -209,4 +271,4 @@ def download_county_data_vnp46a3(h5_files, county_name, poly):
         print(f"  → no data for {county_name}")
 
 if __name__ == "__main__":
-  download_all_counties(product="VNP46A3", date_range=("2024-06-01", "2024-12-31"))
+  download_all_counties(product="VNP46A2", date_range=("2025-02-01", "2025-02-28"), split_into='county', separate=False)
