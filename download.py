@@ -9,8 +9,7 @@ import xarray as xr
 from shapely import contains_xy
 import numpy as np
 
-# token = os.getenv('EARTH_DATA_TOKEN')
-token = "***REMOVED***"
+token = os.getenv('EARTH_DATA_TOKEN')
 usa_gdf = GADMDownloader(version="4.0").get_shape_data_by_country_name(country_name="USA", ad_level=2)
 florida_gdf = usa_gdf[usa_gdf["NAME_1"] == 'Florida']
 florida_poly = florida_gdf.geometry.union_all()
