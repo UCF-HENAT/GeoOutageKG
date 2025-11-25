@@ -8,6 +8,7 @@ import pandas as pd
 import xarray as xr
 from shapely import contains_xy
 import numpy as np
+import argparse
 
 token = os.getenv('EARTH_DATA_TOKEN')
 usa_gdf = GADMDownloader(version="4.0").get_shape_data_by_country_name(country_name="USA", ad_level=2)
@@ -77,7 +78,7 @@ def download_all_counties(product="VNP46A3", date_range=None, split_into="county
                     poly = zip_gdf.geometry.union_all()
 
                     if product == "VNP46A3":
-                        if not os.path.exists(os.path.join(DATA_PATH, zip_code, f"{zip_code}_{date_range_pd.year.values[0]}.pickle")):
+                        if not os.path.exists(os.path.join(DATA_PATH, zip_code, f"{zip_code}_{date_range_pd.year.values[0]}.pkl")):
                             download_county_data_vnp46a3(h5_files, zip_code, poly, DATA_PATH)
                     elif product == "VNP46A2":
                         download_county_data_vnp46a2(h5_files, zip_code, poly, DATA_PATH)
@@ -95,7 +96,7 @@ def download_all_counties(product="VNP46A3", date_range=None, split_into="county
             poly = combined_zcta_gdf.geometry.union_all()
 
             if product == "VNP46A3":
-                if not os.path.exists(os.path.join(DATA_PATH, "combined", f"combined_{date_range_pd.year.values[0]}.pickle")):
+                if not os.path.exists(os.path.join(DATA_PATH, "combined", f"combined_{date_range_pd.year.values[0]}.pkl")):
                         download_county_data_vnp46a3(h5_files, "combined", poly, DATA_PATH)
             elif product == "VNP46A2":
                 download_county_data_vnp46a2(h5_files, "combined", poly, DATA_PATH)
@@ -126,7 +127,7 @@ def download_county_data_vnp46a2(h5_files, county_name, poly, DATA_PATH):
       doy = h5.stem.split('.')[1]
       time = pd.to_datetime(doy, format="A%Y%j")
       # save each day separately
-      out_fp = os.path.join(county_path, f"{time.strftime('%Y_%m_%d')}.pickle")
+      out_fp = os.path.join(county_path, f"{time.strftime('%Y_%m_%d')}.pkl")
       if os.path.exists(out_fp):
           print("Already exists, skipping...")
           continue
@@ -262,7 +263,7 @@ def download_county_data_vnp46a3(h5_files, county_name, poly, DATA_PATH):
 
         # 7) Save one pickle per county per year (or adjust filename as you like)
         year = monthly_arrays[0].time.dt.year.values.tolist()[0]
-        out_fp = os.path.join(county_path, f"{county_name}_{year}.pickle")
+        out_fp = os.path.join(county_path, f"{county_name}_{year}.pkl")
         with open(out_fp, "wb") as f:
             pickle.dump(vnp46a3_data, f)
         print(f"  → saved {out_fp}")
@@ -270,4 +271,13 @@ def download_county_data_vnp46a3(h5_files, county_name, poly, DATA_PATH):
         print(f"  → no data for {county_name}")
 
 if __name__ == "__main__":
-  download_all_counties(product="VNP46A2", date_range=("2025-02-01", "2025-02-28"), split_into='county', separate=False)
+  # Example command line use: python download.py 2025-02-01 2025-02-28 --product="VNP46A2" --split_into="county"
+  p = argparse.ArgumentParser()
+  p.add_argument("start_date", type=str)
+  p.add_argument("end_date", type=str)
+  p.add_argument("--product", type=str, default="VNP46A2")
+  p.add_argument("--split_into", type=str, default="county")
+  p.add_argument("--separate", action="store_true")
+  args = p.parse_args()
+
+  download_all_counties(product=args.product, date_range=(args.start_date, args.end_date), split_into=args.split_into, separate=args.separate)
