@@ -194,6 +194,9 @@ if __name__ == "__main__":
     p = argparse.ArgumentParser()
     p.add_argument("--root_dir", type=str, required=True)
     p.add_argument("--fmt", type=str, default="ttl")
+    p.add_argument("--disable_record", action="store_true")
+    p.add_argument("--disable_map", action="store_true")
+    p.add_argument("--disable_ntlimage", action="store_true")
     args = p.parse_args()
 
     root_dir = args.root_dir
@@ -209,12 +212,18 @@ if __name__ == "__main__":
     gokg_write = GeoOutageKG(ntl_dir, outage_map_dir, fips_json, fmt=fmt)
 
     # Write TTL
-    for year in range(2014, 2025):
-        gokg_write.create_outage_records(year, root_dir, out_path=f"outagerecord_{year}.{fmt}")
-        print(f"Serialized Outage Records for year {year}.")
+    if not args.disable_record:
+        print("Serializing Outage Timeseries Records...")
+        for year in range(2014, 2025):
+            gokg_write.create_outage_records(year, root_dir, out_path=f"outagerecord_{year}.{fmt}")
+            print(f"Serialized Outage Records for year {year}.")
         
-    gokg_write.create_outage_maps(out_path=f"outagemap.{fmt}")
-    print(f"Serialized Outage Maps.")
+    if not args.disable_map:
+        print("Serializing Outage Maps...")
+        gokg_write.create_outage_maps(out_path=f"outagemap.{fmt}")
+        print("Serialized Outage Maps.")
 
-    gokg_write.create_ntl_images(out_path=f"ntlimage.{fmt}")
-    print(f"Serialized NTL Images.")
+    if not args.disable_ntlimage:
+        print("Serializing NTL Images...")
+        gokg_write.create_ntl_images(out_path=f"ntlimage.{fmt}")
+        print("Serialized NTL Images.")
