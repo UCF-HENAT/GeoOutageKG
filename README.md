@@ -11,8 +11,6 @@ All files including NTL and Outage Map imagery can be found on our OSF repositor
 
 The ontology for GeoOutageKG, GeoOutageOnto, can be accessed from the web at https://ucf-henat.github.io/GeoOutageOnto/. The repository for that web link can be found [here](https://github.com/UCF-HENAT/GeoOutageOnto).
 
-This project is licensed under the terms of the [MIT License](./LICENSE).
-
 ## Installation and Initialization
 
 This section covers how to install all appropirate packages for using the provided data download API (download.py) and knowledge graph generator (GeoOutageKG.py). This section also covers downloading and initializing GeoOutageKG for SPAQRL endpoint use.
@@ -43,11 +41,16 @@ This section covers how to install all appropirate packages for using the provid
     pip install -r requirements.txt
     ```
 
-3. (Use if generating your own data, otherwise skip to Step 4) Export NASA Earthdata Token and run download.py (Create Earthdata account and generate token at https://urs.earthdata.nasa.gov/)
+3. (Use if generating your own data, otherwise skip to Step 4) Export NASA Earthdata Token and run download.py (Create Earthdata account and generate token at https://urs.earthdata.nasa.gov/). Replace dates and product as desired. Valid products are VNP46A2 and VNP46A3.
 
     ```
     export EARTH_DATA_TOKEN="EARTH_DATA_TOKEN_HERE"
-    python download.py
+    python download.py 2025-02-01 2025-02-28 --product="VNP46A2"
+    ```
+
+    a. Convert generated daily county pickle files to PNG images. Replace dir with the location of your pickles as needed.
+    ```
+    python pickle_to_image.py --dir="./county_VNP46A2"
     ```
 
 4. (Use if using pre-generated data, otherwise skip to Step 3) Download VNP46A2_county_imgs.zip and outage_maps.zip from https://doi.org/10.17605/OSF.IO/QVD8B and unzip contents
