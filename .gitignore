@@ -1,4 +1,5 @@
 __pycache__
+d2v_model/
 counties_with_geohash.ttl
 calculate_outage_per_capita.py
 geohash_counties.py
