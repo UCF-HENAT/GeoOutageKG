@@ -320,18 +320,10 @@ def calculate_average_month_ntl(filename, month_composites):
   date = pd.Timestamp(filename.split('.')[0].replace('_', '-'))
   transform = transforms.Resize((128, 128))
 
-  if date.year == 2017:
-    month_list = ['2017-05-01', '2017-06-01', '2017-07-01']
-  elif date.year == 2018: 
-    month_list = ['2018-06-01', '2018-07-01', '2018-08-01']
-  elif date.year == 2022:
-    month_list = ['2022-06-01', '2022-07-01', '2022-08-01']
-  elif date.year == 2023:
-    month_list = ['2023-04-01', '2023-05-01', '2023-06-01']
-  elif date.year == 2024:
-    month_list = ['2024-06-01', '2024-07-01', '2024-08-01']
-  else:
-    print('Invalid date')
+  month_1 = (date - pd.DateOffset(months=3)).replace(day=1).strftime("%Y-%m-%d")
+  month_2 = (date - pd.DateOffset(months=2)).replace(day=1).strftime("%Y-%m-%d")
+  month_3 = (date - pd.DateOffset(months=1)).replace(day=1).strftime("%Y-%m-%d")
+  month_list = [month_1, month_2, month_3]
 
   monthly_ntl = []
   for month in month_list:
