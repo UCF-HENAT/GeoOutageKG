@@ -1,3 +1,19 @@
+"""
+  Script for generating outage maps based on given Black Marble NTL data.
+  Requires date, range, and VNP46A2 & VNP46A3 data folders.
+  Black Marble dataset utilty code courtesy of:
+
+  @misc{aparcedo2024multimodalpoweroutageprediction,
+      title={Multimodal Power Outage Prediction for Rapid Disaster Response and Resource Allocation}, 
+      author={Alejandro Aparcedo and Christian Lopez and Abhinav Kotta and Mengjie Li},
+      year={2024},
+      eprint={2410.00017},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      doi={10.48550/arXiv.2410.00017}, 
+  }
+"""
+
 import os
 import types
 import argparse
