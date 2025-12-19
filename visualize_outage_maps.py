@@ -9,6 +9,7 @@ import sys
 import importlib
 
 import numpy as np
+import xarray as xr
 import torch
 import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
@@ -355,9 +356,15 @@ def load_month_composites(county_name, date: datetime, base_dir: str):
   """
 
   county_dir = os.path.join(base_dir, county_name)
-  file_path = os.path.join(county_dir, f"{county_name}_{date.year}.pickle")
-  with open(file_path, 'rb') as file:
-    month_composites = pickle.load(file)
+  cur_year_file_path = os.path.join(county_dir, f"{county_name}_{date.year}.pkl")
+  prev_year_file_path = os.path.join(county_dir, f"{county_name}_{date.year-1}.pkl")
+
+  with open(cur_year_file_path, 'rb') as file:
+    cur_month_composites = pickle.load(file)
+  with open(prev_year_file_path, 'rb') as file:
+    prev_month_composites = pickle.load(file)
+  
+  month_composites = xr.concat([prev_month_composites, cur_month_composites], dim="time")
 
   return month_composites
 
