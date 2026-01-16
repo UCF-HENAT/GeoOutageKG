@@ -413,6 +413,7 @@ def visualize_risk_map(ntls, save_dir, save_folder, dataset, month_dir):
           ntl = ntls[idx, county_idx, horizon]
           ntl_np = ntl_tensor_to_np(ntl, dataset, denorm=True)
           pon_ntl = get_percent_of_normal_ntl(ntl_np, filename, county_names[county_idx], month_dir)
+          pon_ntl = np.flipud(pon_ntl)
 
           # plot using red-yellow-green color map
           fig, ax = plt.subplots(figsize=(10, 10))
@@ -421,7 +422,6 @@ def visualize_risk_map(ntls, save_dir, save_folder, dataset, month_dir):
           plt.axis("off")
           plt.savefig(save_path, bbox_inches='tight')
           plt.close()
-          time.sleep(5)
         except Exception as e:
            print(f"Failed on county {county_names[county_idx]}: {e}")
 
