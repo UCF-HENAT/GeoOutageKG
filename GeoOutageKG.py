@@ -197,6 +197,8 @@ if __name__ == "__main__":
     p.add_argument("--disable_record", action="store_true")
     p.add_argument("--disable_map", action="store_true")
     p.add_argument("--disable_ntlimage", action="store_true")
+    p.add_argument("--start_year", type=int, default=2014)
+    p.add_argument("--end_year", type=int, default=2025)
     args = p.parse_args()
 
     root_dir = args.root_dir
@@ -214,7 +216,7 @@ if __name__ == "__main__":
     # Write TTL
     if not args.disable_record:
         print("Serializing Outage Timeseries Records...")
-        for year in range(2014, 2025):
+        for year in range(args.start_year, args.end_year):
             gokg_write.create_outage_records(year, root_dir, out_path=f"outagerecord_{year}.{fmt}")
             print(f"Serialized Outage Records for year {year}.")
         
