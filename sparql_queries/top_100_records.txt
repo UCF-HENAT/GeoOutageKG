@@ -1,0 +1,21 @@
+PREFIX goo:  <https://ucf-henat.github.io/GeoOutageOnto/#>
+PREFIX dbo:  <https://dbpedia.org/ontology/>
+PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+SELECT 
+  ?rec   
+  ?county 
+  ?date
+  ?num
+WHERE {
+  ?rec a goo:OutageRecord ;
+       goo:representsCounty ?county ;
+       goo:recordDateTime   ?date ;
+       goo:numberOfOutages  ?num .
+}
+# Sort descending by number of outages
+ORDER BY DESC(?num)
+# Only the first 100 results
+LIMIT 100

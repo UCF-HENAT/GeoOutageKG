@@ -1,0 +1,14 @@
+PREFIX goo:  <https://ucf-henat.github.io/GeoOutageOnto/#>
+PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
+
+SELECT 
+  ?rec          # The OutageRecord resource
+  ?recordDate   # Its dateTime
+  ?numOutages   # Its integer count
+WHERE {
+  ?rec a goo:OutageRecord ;
+       goo:recordDateTime ?recordDate ;
+       goo:numberOfOutages ?numOutages .
+  
+  FILTER (YEAR(?recordDate) = 2017)
+}

@@ -1,0 +1,16 @@
+PREFIX goo:  <https://ucf-henat.github.io/GeoOutageOnto/#>
+PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
+PREFIX ma-ont: <http://www.w3.org/ns/ma-ont#>
+
+SELECT 
+  ?map          # The OutageMap resource
+  ?date   		# Its date
+  ?county
+WHERE {
+  ?map a goo:OutageMap ;
+         ma-ont:date ?date ;
+    	 goo:representsCounty ?county .
+  
+  FILTER (YEAR(?date) = 2024)
+}
+ORDER BY ASC(?date)
