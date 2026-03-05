@@ -1,0 +1,35 @@
+PREFIX goo:    <https://ucf-henat.github.io/GeoOutageOnto/#>
+PREFIX dbo:    <https://dbpedia.org/ontology/>
+PREFIX dbr:    <https://dbpedia.org/page/> 
+PREFIX ma-ont: <http://www.w3.org/ns/ma-ont#>
+PREFIX schema: <http://schema.org/>
+PREFIX xsd:    <http://www.w3.org/2001/XMLSchema#>
+PREFIX rdfs:   <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?ntl ?map ?rec
+WHERE {
+  BIND(dbr:Lee_County%2C_Florida AS ?county)
+    
+  # Raw NTL images
+  ?ntl a goo:NTLImage ;
+       goo:representsCounty ?county .
+
+  # Derived outage maps
+  ?map a goo:OutageMap ;
+       goo:representsCounty ?county .
+
+  # Numerical outage records
+  ?rec a goo:OutageRecord ;
+       goo:representsCounty ?county ;
+       goo:hasNTLImage      ?ntl ;
+       goo:hasOutageMap     ?map ;
+       goo:recordDateTime   ?date ;
+       goo:numberOfOutages  ?num .
+
+  # Only “surges” >100 outages in the 1-month windows before and after Hurricane Ian
+  FILTER(?num > 100)
+  FILTER(
+    ?date >= "2022-08-28T00:00:00Z"^^xsd:dateTime &&
+    ?date <  "2022-10-28T00:00:00Z"^^xsd:dateTime
+  )
+}

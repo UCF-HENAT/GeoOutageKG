@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from gadm import GADMDownloader
 from blackmarble.download import BlackMarbleDownloader
 import pickle

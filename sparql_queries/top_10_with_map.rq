@@ -1,0 +1,34 @@
+PREFIX goo:  <https://ucf-henat.github.io/GeoOutageOnto/#>
+PREFIX dbo:  <https://dbpedia.org/ontology/>
+PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
+
+SELECT 
+  ?county
+  ?maxOutages
+  ?dateOfMax
+  ?rec
+  ?ntl
+  ?map
+WHERE {
+  # Compute the maximum outages per county
+  {
+    SELECT 
+      ?county
+      (MAX(?num) AS ?maxOutages)
+    WHERE {
+      ?rec a goo:OutageRecord ;
+           goo:representsCounty ?county ;
+           goo:numberOfOutages  ?num .
+    }
+    GROUP BY ?county
+  }
+  # Link back to the records that match that maximum
+  ?rec a goo:OutageRecord ;
+       goo:representsCounty ?county ;
+       goo:numberOfOutages  ?maxOutages ;
+       goo:recordDateTime   ?dateOfMax ;
+       goo:hasNTLImage      ?ntl ;
+       goo:hasOutageMap     ?map .
+}
+ORDER BY DESC(?maxOutages)
+LIMIT 10
