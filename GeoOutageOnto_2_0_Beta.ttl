@@ -36,13 +36,32 @@ goo:OutageRecord a rdfs:Class ;
     rdfs:label "Outage Record"@en ;
     rdfs:comment "Numerical outage record for county at date and time from Eagle-I dataset."@en .
 
+goo:GOESImage a rdfs:Class ;
+    rdfs:subClassOf mds:Image ;
+    rdfs:label "GOES Image"@en ;
+    rdfs:comment "A subclass of mds:Image representing NOAA GOES satellite images."@en .
+
+goo:AquaImage a rdfs:Class ;
+    rdfs:subClassOf mds:Image ;
+    rdfs:label "Aqua Image"@en ;
+    rdfs:comment "A subclass of mds:Image representing NASA Aqua satellite images."@en .
+    
+goo:TerraImage a rdfs:Class ;
+    rdfs:subClassOf mds:Image ;
+    rdfs:label "Terra Image"@en ;
+    rdfs:comment "A subclass of mds:Image representing NASA Terra satellite images."@en .
+
+goo:StormEvent a rdfs:Class ;
+    rdfs:label "Storm Event"@en ;
+    rdfs:comment "A storm event that from the NOAA Storm Events Database."@en .
+
 #########################
 # Datatype Properties
 #########################
 
 goo:recordDateTime a owl:DatatypeProperty ;
     rdfs:label "Outage Record DateTime"@en ;
-    rdfs:domain goo:OutageRecord ;
+    rdfs:domain goo:OutageRecord , goo:StormEvent ;
     rdfs:comment "Date and time for numerical outage record for county from Eagle-I dataset."@en ;
     rdfs:range xsd:dateTime .
 
@@ -51,6 +70,18 @@ goo:numberOfOutages a owl:DatatypeProperty ;
     rdfs:domain goo:OutageRecord ;
     rdfs:comment "Numerical outage record for county at date and time from Eagle-I dataset."@en ;
     rdfs:range xsd:integer .
+
+goo:spectralBand a owl:DatatypeProperty ;
+    rdfs:label "Spectral Band"@en ;
+    rdfs:domain goo:GOESImage , goo:TerraImage , goo:AquaImage ;
+    rdfs:comment "Spectral band of the satellite image."@en ;
+    rdfs:range xsd:string .
+
+goo:stormType a owl:DatatypeProperty ;
+    rdfs:label "Storm Type"@en ;
+    rdfs:domain goo:StormEvent ;
+    rdfs:comment "Type of storm event from the NOAA Storm Events Database."@en ;
+    rdfs:range xsd:string .
 
 #########################
 # Object Properties
@@ -64,14 +95,14 @@ goo:representsCounty a owl:ObjectProperty ;
 
 goo:fromSatellite a owl:ObjectProperty ;
     rdfs:label "from satellite"@en ;
-    rdfs:domain goo:NTLImage ;
-    rdfs:range eor:satellite.2011-061A ;
+    rdfs:domain goo:NTLImage , goo:GOESImage , goo:TerraImage , goo:AquaImage ;
+    rdfs:range eo-ont:Satellite ;
     rdfs:comment "Indicates which satellite captured the image."@en .
 
 goo:fromSensor a owl:ObjectProperty ;
     rdfs:label "from sensor"@en ;
-    rdfs:domain goo:NTLImage ;
-    rdfs:range eor:sensor.1c58ddb9-2b4c-4fe0-9970-f5fdc7242f6b ;
+    rdfs:domain goo:NTLImage , goo:GOESImage , goo:TerraImage , goo:AquaImage ;
+    rdfs:range eo-ont:Sensor ;
     rdfs:comment "Indicates which sensor (instrument) on the satellite captured the image."@en .
 
 goo:hasOutageMap a owl:ObjectProperty ;
@@ -91,6 +122,23 @@ goo:neighboringCounties a owl:ObjectProperty , owl:SymmetricProperty ;
     rdfs:domain goo:County ;
     rdfs:range goo:County ;
     rdfs:comment "Links a county to the counties that share a border with it."@en .
+
+#########################
+# Satellites and Sensors
+#########################
+
+goo:NTLImage goo:fromSatellite eor:satellite.2011-061A ;
+    goo:fromSensor eor:sensor.1c58ddb9-2b4c-4fe0-9970-f5fdc7242f6b ;
+    rdfs:comment "Nighttime Light images from Black Marble Dataset captured by VIIRS sensor on Suomi NPP satellite."@en .
+
+goo:GOESImage goo:fromSatellite eor:satellite.2016-071A , eor:satellite.2018-022A , eor:satellite.2022-021A , eor:satellite.2024-119A;
+    rdfs:comment "NOAA GOES satellite images captured by various sensors on GOES-16, GOES-17, GOES-18, and GOES-19 satellites."@en .
+
+goo:AquaImage goo:fromSatellite eor:satellite.2002-022A ;
+    rdfs:comment "NASA Aqua satellite images captured by various sensors on Aqua satellite."@en .
+
+goo:TerraImage goo:fromSatellite eor:satellite.1999-068A ;
+    rdfs:comment "NASA Terra satellite images captured by various sensors on Terra satellite."@en .
 
 #########################
 # County Definitions
