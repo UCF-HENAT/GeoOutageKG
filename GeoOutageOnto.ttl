@@ -16,6 +16,8 @@
 goo:NTLImage a rdfs:Class ;
     rdfs:subClassOf ma-ont:Image ;
     rdfs:label "NTL Image"@en ;
+    goo:fromSatellite eor:satellite.2011-061A ;
+    goo:fromSensor eor:sensor.1c58ddb9-2b4c-4fe0-9970-f5fdc7242f6b ;
     rdfs:comment "A subclass of ma-ont:Image representing Nighttime Light images from Black Marble Dataset."@en .
 
 goo:OutageMap a rdfs:Class ;
