@@ -27,6 +27,10 @@ goo:SatelliteImage a rdfs:Class ;
     rdfs:label "Satellite Image"@en ;
     rdfs:comment "A satellite image used in the GeoOutageKG."@en .
 
+goo:TabularData a rdfs:Class ;
+    rdfs:label "Tabular Data"@en ;
+    rdfs:comment "A tabular dataset, such as numerical outage records or storm event records."@en .
+
 goo:NTLImage a rdfs:Class ;
     rdfs:subClassOf goo:SatelliteImage ;
     rdfs:label "NTL Image"@en ;
@@ -53,12 +57,19 @@ goo:TerraImage a rdfs:Class ;
     rdfs:comment "A subclass of mds:Image representing NASA Terra satellite images."@en .
 
 goo:OutageRecord a rdfs:Class ;
+    rdfs:subClassOf goo:TabularData ;
     rdfs:label "Outage Record"@en ;
     rdfs:comment "Numerical outage record for county at date and time from Eagle-I dataset."@en .
 
 goo:StormEvent a rdfs:Class ;
+    rdfs:subClassOf goo:TabularData ;
     rdfs:label "Storm Event"@en ;
     rdfs:comment "A storm event that from the NOAA Storm Events Database."@en .
+
+goo:HurricaneEvent a rdfs:Class ;
+    rdfs:subClassOf goo:TabularData ;
+    rdfs:label "Hurricane Event"@en ;
+    rdfs:comment "A hurricane event from the NOAA HURDAT Database."@en .
 
 #########################
 # Datatype Properties
