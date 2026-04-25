@@ -56,10 +56,10 @@ goo:TerraImage a rdfs:Class ;
     rdfs:label "Terra Image"@en ;
     rdfs:comment "A subclass of mds:Image representing NASA Terra satellite images."@en .
 
-goo:OutageRecord a rdfs:Class ;
+goo:CustomerOutageRecord a rdfs:Class ;
     rdfs:subClassOf goo:TabularData ;
-    rdfs:label "Outage Record"@en ;
-    rdfs:comment "Numerical outage record for county at date and time from Eagle-I dataset."@en .
+    rdfs:label "Customer Outage Record"@en ;
+    rdfs:comment "Numerical outage record per customer for county at date and time from Eagle-I dataset."@en .
 
 goo:StormEvent a rdfs:Class ;
     rdfs:subClassOf goo:TabularData ;
@@ -77,14 +77,29 @@ goo:HurricaneEvent a rdfs:Class ;
 
 goo:recordDateTime a owl:DatatypeProperty ;
     rdfs:label "Outage Record DateTime"@en ;
-    rdfs:domain goo:OutageRecord , goo:StormEvent ;
+    rdfs:domain goo:CustomerOutageRecord , goo:StormEvent ;
     rdfs:comment "Date and time for numerical outage record for county from Eagle-I dataset."@en ;
     rdfs:range xsd:dateTime .
 
+goo:eventStartTime a owl:DatatypeProperty ;
+    rdfs:label "Event Start Time"@en ;
+    rdfs:domain goo:StormEvent ;
+    rdfs:range xsd:dateTime .
+
+goo:eventEndTime a owl:DatatypeProperty ;
+    rdfs:label "Event End Time"@en ;
+    rdfs:domain goo:StormEvent ;
+    rdfs:range xsd:dateTime .
+
+goo:maxSustainedWindSpeed a owl:DatatypeProperty ;
+    rdfs:label "Maximum Sustained Wind Speed (knots)"@en ;
+    rdfs:domain goo:HurricaneEvent ;
+    rdfs:range xsd:integer .
+
 goo:numberOfOutages a owl:DatatypeProperty ;
     rdfs:label "Number of Outages"@en ;
-    rdfs:domain goo:OutageRecord ;
-    rdfs:comment "Numerical outage record for county at date and time from Eagle-I dataset."@en ;
+    rdfs:domain goo:CustomerOutageRecord ;
+    rdfs:comment "Numerical outage record per customer for county at date and time from Eagle-I dataset."@en ;
     rdfs:range xsd:integer .
 
 goo:spectralBand a owl:DatatypeProperty ;
@@ -105,7 +120,7 @@ goo:stormType a owl:DatatypeProperty ;
 
 goo:representsCounty a owl:ObjectProperty ;
     rdfs:label "represents county"@en ;
-    rdfs:domain goo:SatelliteImage , goo:OutageMap , goo:OutageRecord ;
+    rdfs:domain goo:SatelliteImage , goo:OutageMap , goo:CustomerOutageRecord ;
     rdfs:range goo:County ;
     rdfs:comment "Links an NTL image, outage map, or outage record to U.S. county that it depicts."@en .
 
@@ -123,13 +138,13 @@ goo:fromSensor a owl:ObjectProperty ;
 
 goo:hasOutageMap a owl:ObjectProperty ;
     rdfs:label "has outage map"@en ;
-    rdfs:domain goo:SatelliteImage , goo:OutageRecord , goo:StormEvent ;
+    rdfs:domain goo:SatelliteImage , goo:CustomerOutageRecord , goo:StormEvent ;
     rdfs:range goo:OutageMap ;
     rdfs:comment "Associates numerical NTL image or outage record with power outage severity map generated from NTL image."@en .
 
 goo:hasNTLImage a owl:ObjectProperty ;
     rdfs:label "has NTL image"@en ;
-    rdfs:domain goo:OutageRecord , goo:StormEvent ;
+    rdfs:domain goo:CustomerOutageRecord ;
     rdfs:range goo:NTLImage ;
     rdfs:comment "Associates numerical outage record with NTL image from same day as recorded outage record."@en .
 
@@ -147,7 +162,7 @@ goo:NTLImage goo:fromSatellite eor:satellite.2011-061A ;
     goo:fromSensor eor:sensor.1c58ddb9-2b4c-4fe0-9970-f5fdc7242f6b ;
     rdfs:comment "Nighttime Light images from Black Marble Dataset captured by VIIRS sensor on Suomi NPP satellite."@en .
 
-goo:GOESImage goo:fromSatellite eor:satellite.2016-071A , eor:satellite.2018-022A , eor:satellite.2022-021A , eor:satellite.2024-119A;
+goo:GOESImage goo:fromSatellite eor:satellite.2016-071A , eor:satellite.2018-022A , eor:satellite.2022-021A , eor:satellite.2024-119A ;
     rdfs:comment "NOAA GOES satellite images captured by various sensors on GOES-16, GOES-17, GOES-18, and GOES-19 satellites."@en .
 
 goo:AquaImage goo:fromSatellite eor:satellite.2002-022A ;
