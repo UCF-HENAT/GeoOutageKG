@@ -17,62 +17,62 @@
 # Class Definitions
 #########################
 
-goo:County a rdfs:Class ;
+goo:County a owl:Class ;
     rdfs:subClassOf geo:SpatialThing , geosparql:Feature ;
     rdfs:label "County"@en ;
     rdfs:comment "A U.S. county with geospatial coordinate metadata and links to external resources such as DBpedia and Wikidata."@en .
 
-goo:SatelliteImage a rdfs:Class ;
+goo:SatelliteImage a owl:Class ;
     rdfs:subClassOf mds:Image ;
     rdfs:label "Satellite Image"@en ;
     rdfs:comment "A satellite image used in the GeoOutageKG."@en .
 
-goo:TabularData a rdfs:Class ;
+goo:TabularData a owl:Class ;
     rdfs:subClassOf mds:Dataset ;
     rdfs:label "Tabular Data"@en ;
     rdfs:comment "A tabular dataset, such as numerical outage records or storm event records."@en .
 
-goo:NTLImage a rdfs:Class ;
+goo:NTLImage a owl:Class ;
     rdfs:subClassOf goo:SatelliteImage ;
     rdfs:label "NTL Image"@en ;
     rdfs:comment "A subclass of mds:Image representing Nighttime Light images from Black Marble Dataset."@en .
 
-goo:OutageMap a rdfs:Class ;
+goo:OutageMap a owl:Class ;
     rdfs:subClassOf mds:Image ;
     rdfs:label "Outage Map"@en ;
     rdfs:comment "Power outage map of county generated using NTL Imagery and Multimodal Outage Detector."@en .
 
-goo:GOESImage a rdfs:Class ;
+goo:GOESImage a owl:Class ;
     rdfs:subClassOf goo:SatelliteImage ;
     rdfs:label "GOES Image"@en ;
     rdfs:comment "A subclass of mds:Image representing NOAA GOES satellite images."@en .
 
-goo:AquaImage a rdfs:Class ;
+goo:AquaImage a owl:Class ;
     rdfs:subClassOf goo:SatelliteImage ;
     rdfs:label "Aqua Image"@en ;
     rdfs:comment "A subclass of mds:Image representing NASA Aqua satellite images."@en .
     
-goo:TerraImage a rdfs:Class ;
+goo:TerraImage a owl:Class ;
     rdfs:subClassOf goo:SatelliteImage ;
     rdfs:label "Terra Image"@en ;
     rdfs:comment "A subclass of mds:Image representing NASA Terra satellite images."@en .
 
-goo:CustomerOutageRecord a rdfs:Class ;
+goo:CustomerOutageRecord a owl:Class ;
     rdfs:subClassOf goo:TabularData ;
     rdfs:label "Customer Outage Record"@en ;
     rdfs:comment "Numerical outage record per customer for county at date and time from Eagle-I dataset."@en .
 
-goo:StormEvent a rdfs:Class ;
+goo:StormEvent a owl:Class ;
     rdfs:subClassOf goo:TabularData ;
     rdfs:label "Storm Event"@en ;
     rdfs:comment "A storm event that from the NOAA Storm Events Database."@en .
 
-goo:HurricaneEvent a rdfs:Class ;
+goo:HurricaneEvent a owl:Class ;
     rdfs:subClassOf goo:TabularData ;
     rdfs:label "Hurricane Event"@en ;
     rdfs:comment "A hurricane event from the NOAA HURDAT Database."@en .
 
-goo:HurricaneTrackRecord a rdfs:Class ;
+goo:HurricaneTrackRecord a owl:Class ;
     rdfs:subClassOf goo:TabularData ;
     rdfs:label "Hurricane Track Record"@en ;
     rdfs:comment "A specific 6-hourly position and intensity record for a hurricane event."@en .
@@ -82,20 +82,22 @@ goo:HurricaneTrackRecord a rdfs:Class ;
 #########################
 
 goo:recordDateTime a owl:DatatypeProperty ;
-    rdfs:label "Outage Record DateTime"@en ;
+    rdfs:label "Record DateTime"@en ;
     rdfs:domain goo:TabularData ;
-    rdfs:comment "Date and time for numerical outage record for county from Eagle-I dataset."@en ;
-    rdfs:range xsd:dateTime .
+    rdfs:range xsd:dateTime ;
+    rdfs:comment "Date and time for tabular data, if only one time point provided."@en .
 
 goo:eventStartTime a owl:DatatypeProperty ;
     rdfs:label "Event Start Time"@en ;
-    rdfs:domain goo:StormEvent , goo:HurricaneEvent ;
-    rdfs:range xsd:dateTime .
+    rdfs:domain goo:TabularData ;
+    rdfs:range xsd:dateTime ;
+    rdfs:comment "Event start date and time for tabular data."@en .
 
 goo:eventEndTime a owl:DatatypeProperty ;
     rdfs:label "Event End Time"@en ;
-    rdfs:domain goo:StormEvent , goo:HurricaneEvent ;
-    rdfs:range xsd:dateTime .
+    rdfs:domain goo:TabularData ;
+    rdfs:range xsd:dateTime ;
+    rdfs:comment "Event end date and time for tabular data."@en .
 
 goo:maxSustainedWindSpeed a owl:DatatypeProperty ;
     rdfs:subPropertyOf mds:hasWindSpeed ;
@@ -106,20 +108,20 @@ goo:maxSustainedWindSpeed a owl:DatatypeProperty ;
 goo:numberOfOutages a owl:DatatypeProperty ;
     rdfs:label "Number of Outages"@en ;
     rdfs:domain goo:CustomerOutageRecord ;
-    rdfs:comment "Numerical outage record per customer for county at date and time from Eagle-I dataset."@en ;
-    rdfs:range xsd:integer .
+    rdfs:range xsd:integer ;
+    rdfs:comment "Numerical outage record per customer for county at date and time from Eagle-I dataset."@en .
 
 goo:spectralBand a owl:DatatypeProperty ;
     rdfs:label "Spectral Band"@en ;
     rdfs:domain goo:SatelliteImage ;
-    rdfs:comment "Spectral band of the satellite image."@en ;
-    rdfs:range xsd:string .
+    rdfs:range xsd:string ;
+    rdfs:comment "Spectral band of the satellite image."@en .
 
 goo:stormType a owl:DatatypeProperty ;
     rdfs:label "Storm Type"@en ;
     rdfs:domain goo:StormEvent ;
-    rdfs:comment "Type of storm event from the NOAA Storm Events Database."@en ;
-    rdfs:range xsd:string .
+    rdfs:range xsd:string ;
+    rdfs:comment "Type of storm event from the NOAA Storm Events Database."@en .
 
 goo:minPressure a owl:DatatypeProperty ;
     rdfs:label "Minimum Central Pressure (mb)"@en ;
