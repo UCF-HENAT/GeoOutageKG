@@ -71,24 +71,29 @@ goo:HurricaneEvent a rdfs:Class ;
     rdfs:label "Hurricane Event"@en ;
     rdfs:comment "A hurricane event from the NOAA HURDAT Database."@en .
 
+goo:HurricaneTrackRecord a rdfs:Class ;
+    rdfs:subClassOf goo:TabularData ;
+    rdfs:label "Hurricane Track Record"@en ;
+    rdfs:comment "A specific 6-hourly position and intensity record for a hurricane event."@en .
+
 #########################
 # Datatype Properties
 #########################
 
 goo:recordDateTime a owl:DatatypeProperty ;
     rdfs:label "Outage Record DateTime"@en ;
-    rdfs:domain goo:CustomerOutageRecord , goo:StormEvent ;
+    rdfs:domain goo:TabularData ;
     rdfs:comment "Date and time for numerical outage record for county from Eagle-I dataset."@en ;
     rdfs:range xsd:dateTime .
 
 goo:eventStartTime a owl:DatatypeProperty ;
     rdfs:label "Event Start Time"@en ;
-    rdfs:domain goo:StormEvent ;
+    rdfs:domain goo:StormEvent , goo:HurricaneEvent ;
     rdfs:range xsd:dateTime .
 
 goo:eventEndTime a owl:DatatypeProperty ;
     rdfs:label "Event End Time"@en ;
-    rdfs:domain goo:StormEvent ;
+    rdfs:domain goo:StormEvent , goo:HurricaneEvent ;
     rdfs:range xsd:dateTime .
 
 goo:maxSustainedWindSpeed a owl:DatatypeProperty ;
@@ -113,6 +118,30 @@ goo:stormType a owl:DatatypeProperty ;
     rdfs:domain goo:StormEvent ;
     rdfs:comment "Type of storm event from the NOAA Storm Events Database."@en ;
     rdfs:range xsd:string .
+
+goo:minPressure a owl:DatatypeProperty ;
+    rdfs:label "Minimum Central Pressure (mb)"@en ;
+    rdfs:domain goo:HurricaneEvent , goo:HurricaneTrackRecord ;
+    rdfs:range xsd:integer ;
+    rdfs:comment "The minimum central pressure of the storm in millibars."@en .
+
+goo:stormId a owl:DatatypeProperty ;
+    rdfs:label "Storm ID"@en ;
+    rdfs:domain goo:HurricaneEvent ;
+    rdfs:range xsd:string ;
+    rdfs:comment "The official NHC storm identifier (e.g., AL092021)."@en .
+
+goo:basin a owl:DatatypeProperty ;
+    rdfs:label "Basin"@en ;
+    rdfs:domain goo:HurricaneEvent ;
+    rdfs:range xsd:string ;
+    rdfs:comment "The ocean basin where the storm occurred (e.g., ATL, EPAC)."@en .
+
+goo:status a owl:DatatypeProperty ;
+    rdfs:label "Storm Status"@en ;
+    rdfs:domain goo:HurricaneTrackRecord ;
+    rdfs:range xsd:string ;
+    rdfs:comment "The phase or status of the storm at a given time (e.g., TD, TS, HU)."@en .
 
 #########################
 # Object Properties
@@ -153,6 +182,12 @@ goo:neighboringCounties a owl:ObjectProperty , owl:SymmetricProperty ;
     rdfs:domain goo:County ;
     rdfs:range goo:County ;
     rdfs:comment "Links a county to the counties that share a border with it."@en .
+
+goo:hasTrackRecord a owl:ObjectProperty ;
+    rdfs:label "has track record"@en ;
+    rdfs:domain goo:HurricaneEvent ;
+    rdfs:range goo:HurricaneTrackRecord ;
+    rdfs:comment "Associates a hurricane event with its individual 6-hourly position and intensity track records."@en .
 
 #########################
 # Satellites and Sensors
