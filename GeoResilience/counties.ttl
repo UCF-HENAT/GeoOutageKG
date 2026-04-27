@@ -13,158 +13,12 @@
 @prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
 @prefix mds: <https://cwrusdle.bitbucket.io/mds/> .
 
-#########################
-# Class Definitions
-#########################
-
-goo:County a rdfs:Class ;
-    rdfs:subClassOf geo:SpatialThing , geosparql:Feature ;
-    rdfs:label "County"@en ;
-    rdfs:comment "A U.S. county with geospatial coordinate metadata and links to external resources such as DBpedia and Wikidata."@en .
-
-goo:SatelliteImage a rdfs:Class ;
-    rdfs:subClassOf mds:Image ;
-    rdfs:label "Satellite Image"@en ;
-    rdfs:comment "A satellite image used in the GeoOutageKG."@en .
-
-goo:TabularData a rdfs:Class ;
-    rdfs:label "Tabular Data"@en ;
-    rdfs:comment "A tabular dataset, such as numerical outage records or storm event records."@en .
-
-goo:NTLImage a rdfs:Class ;
-    rdfs:subClassOf goo:SatelliteImage ;
-    rdfs:label "NTL Image"@en ;
-    rdfs:comment "A subclass of mds:Image representing Nighttime Light images from Black Marble Dataset."@en .
-
-goo:OutageMap a rdfs:Class ;
-    rdfs:subClassOf mds:Image ;
-    rdfs:label "Outage Map"@en ;
-    rdfs:comment "Power outage map of county generated using NTL Imagery and Multimodal Outage Detector."@en .
-
-goo:GOESImage a rdfs:Class ;
-    rdfs:subClassOf goo:SatelliteImage ;
-    rdfs:label "GOES Image"@en ;
-    rdfs:comment "A subclass of mds:Image representing NOAA GOES satellite images."@en .
-
-goo:AquaImage a rdfs:Class ;
-    rdfs:subClassOf goo:SatelliteImage ;
-    rdfs:label "Aqua Image"@en ;
-    rdfs:comment "A subclass of mds:Image representing NASA Aqua satellite images."@en .
-    
-goo:TerraImage a rdfs:Class ;
-    rdfs:subClassOf goo:SatelliteImage ;
-    rdfs:label "Terra Image"@en ;
-    rdfs:comment "A subclass of mds:Image representing NASA Terra satellite images."@en .
-
-goo:OutageRecord a rdfs:Class ;
-    rdfs:subClassOf goo:TabularData ;
-    rdfs:label "Outage Record"@en ;
-    rdfs:comment "Numerical outage record for county at date and time from Eagle-I dataset."@en .
-
-goo:StormEvent a rdfs:Class ;
-    rdfs:subClassOf goo:TabularData ;
-    rdfs:label "Storm Event"@en ;
-    rdfs:comment "A storm event that from the NOAA Storm Events Database."@en .
-
-goo:HurricaneEvent a rdfs:Class ;
-    rdfs:subClassOf goo:TabularData ;
-    rdfs:label "Hurricane Event"@en ;
-    rdfs:comment "A hurricane event from the NOAA HURDAT Database."@en .
-
-#########################
-# Datatype Properties
-#########################
-
-goo:recordDateTime a owl:DatatypeProperty ;
-    rdfs:label "Outage Record DateTime"@en ;
-    rdfs:domain goo:OutageRecord , goo:StormEvent ;
-    rdfs:comment "Date and time for numerical outage record for county from Eagle-I dataset."@en ;
-    rdfs:range xsd:dateTime .
-
-goo:numberOfOutages a owl:DatatypeProperty ;
-    rdfs:label "Number of Outages"@en ;
-    rdfs:domain goo:OutageRecord ;
-    rdfs:comment "Numerical outage record for county at date and time from Eagle-I dataset."@en ;
-    rdfs:range xsd:integer .
-
-goo:spectralBand a owl:DatatypeProperty ;
-    rdfs:label "Spectral Band"@en ;
-    rdfs:domain goo:SatelliteImage ;
-    rdfs:comment "Spectral band of the satellite image."@en ;
-    rdfs:range xsd:string .
-
-goo:stormType a owl:DatatypeProperty ;
-    rdfs:label "Storm Type"@en ;
-    rdfs:domain goo:StormEvent ;
-    rdfs:comment "Type of storm event from the NOAA Storm Events Database."@en ;
-    rdfs:range xsd:string .
-
-#########################
-# Object Properties
-#########################
-
-goo:representsCounty a owl:ObjectProperty ;
-    rdfs:label "represents county"@en ;
-    rdfs:domain goo:SatelliteImage , goo:OutageMap , goo:OutageRecord ;
-    rdfs:range goo:County ;
-    rdfs:comment "Links an NTL image, outage map, or outage record to U.S. county that it depicts."@en .
-
-goo:fromSatellite a owl:ObjectProperty ;
-    rdfs:label "from satellite"@en ;
-    rdfs:domain goo:SatelliteImage ;
-    rdfs:range eo-ont:Satellite ;
-    rdfs:comment "Indicates which satellite captured the image."@en .
-
-goo:fromSensor a owl:ObjectProperty ;
-    rdfs:label "from sensor"@en ;
-    rdfs:domain goo:SatelliteImage ;
-    rdfs:range eo-ont:Sensor ;
-    rdfs:comment "Indicates which sensor (instrument) on the satellite captured the image."@en .
-
-goo:hasOutageMap a owl:ObjectProperty ;
-    rdfs:label "has outage map"@en ;
-    rdfs:domain goo:SatelliteImage , goo:OutageRecord , goo:StormEvent ;
-    rdfs:range goo:OutageMap ;
-    rdfs:comment "Associates numerical NTL image or outage record with power outage severity map generated from NTL image."@en .
-
-goo:hasNTLImage a owl:ObjectProperty ;
-    rdfs:label "has NTL image"@en ;
-    rdfs:domain goo:OutageRecord , goo:StormEvent ;
-    rdfs:range goo:NTLImage ;
-    rdfs:comment "Associates numerical outage record with NTL image from same day as recorded outage record."@en .
-
-goo:neighboringCounties a owl:ObjectProperty , owl:SymmetricProperty ;
-    rdfs:label "neighboring counties"@en ;
-    rdfs:domain goo:County ;
-    rdfs:range goo:County ;
-    rdfs:comment "Links a county to the counties that share a border with it."@en .
-
-#########################
-# Satellites and Sensors
-#########################
-
-goo:NTLImage goo:fromSatellite eor:satellite.2011-061A ;
-    goo:fromSensor eor:sensor.1c58ddb9-2b4c-4fe0-9970-f5fdc7242f6b ;
-    rdfs:comment "Nighttime Light images from Black Marble Dataset captured by VIIRS sensor on Suomi NPP satellite."@en .
-
-goo:GOESImage goo:fromSatellite eor:satellite.2016-071A , eor:satellite.2018-022A , eor:satellite.2022-021A , eor:satellite.2024-119A;
-    rdfs:comment "NOAA GOES satellite images captured by various sensors on GOES-16, GOES-17, GOES-18, and GOES-19 satellites."@en .
-
-goo:AquaImage goo:fromSatellite eor:satellite.2002-022A ;
-    rdfs:comment "NASA Aqua satellite images captured by various sensors on Aqua satellite."@en .
-
-goo:TerraImage goo:fromSatellite eor:satellite.1999-068A ;
-    rdfs:comment "NASA Terra satellite images captured by various sensors on Terra satellite."@en .
-
-#########################
-# County Definitions
-#########################
 
 goo:AlachuaCountyFL a goo:County ;
     rdfs:label      "Alachua County, Florida"@en ;
     owl:sameAs      dbr:Alachua_County%2C_Florida , wd:Q488826 ;
-    geo:lat         "29.67574"^^xsd:decimal ;
-    geo:long        "-82.357221"^^xsd:decimal ;
+    goo:lat         "29.67574"^^xsd:decimal ;
+    goo:lon        "-82.357221"^^xsd:decimal ;
     mds:Geohash     "djj" , "djm" ;
     goo:neighboringCounties goo:BradfordCountyFL , goo:ClayCountyFL , goo:ColumbiaCountyFL , goo:GilchristCountyFL ,
         goo:LevyCountyFL , goo:MarionCountyFL , goo:PutnamCountyFL , goo:UnionCountyFL ;
@@ -177,8 +31,8 @@ goo:AlachuaCountyFLGeom a geosparql:Geometry ;
 goo:BakerCountyFL a goo:County ;
     rdfs:label      "Baker County, Florida"@en ;
     owl:sameAs      dbr:Baker_County%2C_Florida , wd:Q156568 ;
-    geo:lat         "30.324442"^^xsd:decimal ;
-    geo:long        "-82.302284"^^xsd:decimal ;
+    goo:lat         "30.324442"^^xsd:decimal ;
+    goo:lon        "-82.302284"^^xsd:decimal ;
     mds:Geohash     "djm" ;
     goo:neighboringCounties goo:BradfordCountyFL , goo:ClayCountyFL , goo:ColumbiaCountyFL , goo:DuvalCountyFL ,
         goo:NassauCountyFL , goo:UnionCountyFL ;
@@ -191,8 +45,8 @@ goo:BakerCountyFLGeom a geosparql:Geometry ;
 goo:BayCountyFL a goo:County ;
     rdfs:label      "Bay County, Florida"@en ;
     owl:sameAs      dbr:Bay_County%2C_Florida , wd:Q488865 ;
-    geo:lat         "30.238218"^^xsd:decimal ;
-    geo:long        "-85.631680"^^xsd:decimal ;
+    goo:lat         "30.238218"^^xsd:decimal ;
+    goo:lon        "-85.631680"^^xsd:decimal ;
     mds:Geohash     "dj7" , "dj6" ;
     goo:neighboringCounties goo:CalhounCountyFL , goo:GulfCountyFL , goo:JacksonCountyFL , goo:WaltonCountyFL ,
         goo:WashingtonCountyFL ;
@@ -205,8 +59,8 @@ goo:BayCountyFLGeom a geosparql:Geometry ;
 goo:BradfordCountyFL a goo:County ;
     rdfs:label      "Bradford County, Florida"@en ;
     owl:sameAs      dbr:Bradford_County%2C_Florida , wd:Q156577 ;
-    geo:lat         "29.952386"^^xsd:decimal ;
-    geo:long        "-82.166679"^^xsd:decimal ;
+    goo:lat         "29.952386"^^xsd:decimal ;
+    goo:lon        "-82.166679"^^xsd:decimal ;
     mds:Geohash     "djm" ;
     goo:neighboringCounties goo:AlachuaCountyFL , goo:BakerCountyFL , goo:ClayCountyFL , goo:PutnamCountyFL ,
         goo:UnionCountyFL ;
@@ -219,8 +73,8 @@ goo:BradfordCountyFLGeom a geosparql:Geometry ;
 goo:BrevardCountyFL a goo:County ;
     rdfs:label      "Brevard County, Florida"@en ;
     owl:sameAs      dbr:Brevard_County%2C_Florida , wd:Q488517 ;
-    geo:lat         "28.298311"^^xsd:decimal ;
-    geo:long        "-80.700333"^^xsd:decimal ;
+    goo:lat         "28.298311"^^xsd:decimal ;
+    goo:lon        "-80.700333"^^xsd:decimal ;
     mds:Geohash     "djn" , "dhy" ;
     goo:neighboringCounties goo:IndianRiverCountyFL , goo:OrangeCountyFL , goo:OsceolaCountyFL , goo:VolusiaCountyFL ;
     geosparql:hasGeometry goo:BrevardCountyFLGeom .
@@ -232,8 +86,8 @@ goo:BrevardCountyFLGeom a geosparql:Geometry ;
 goo:BrowardCountyFL a goo:County ;
     rdfs:label      "Broward County, Florida"@en ;
     owl:sameAs      dbr:Broward_County%2C_Florida , wd:Q494624 ;
-    geo:lat         "26.193535"^^xsd:decimal ;
-    geo:long        "-80.476683"^^xsd:decimal ;
+    goo:lat         "26.193535"^^xsd:decimal ;
+    goo:lon        "-80.476683"^^xsd:decimal ;
     mds:Geohash     "dhx" , "dhw" ;
     goo:neighboringCounties goo:CollierCountyFL , goo:HendryCountyFL , goo:MiamiDadeCountyFL , goo:PalmBeachCountyFL ;
     geosparql:hasGeometry goo:BrowardCountyFLGeom .
@@ -245,8 +99,8 @@ goo:BrowardCountyFLGeom a geosparql:Geometry ;
 goo:CalhounCountyFL a goo:County ;
     rdfs:label      "Calhoun County, Florida"@en ;
     owl:sameAs      dbr:Calhoun_County%2C_Florida , wd:Q174913 ;
-    geo:lat         "30.388801"^^xsd:decimal ;
-    geo:long        "-85.197915"^^xsd:decimal ;
+    goo:lat         "30.388801"^^xsd:decimal ;
+    goo:lon        "-85.197915"^^xsd:decimal ;
     mds:Geohash     "dj7" ;
     goo:neighboringCounties goo:BayCountyFL , goo:GadsdenCountyFL , goo:GulfCountyFL , goo:JacksonCountyFL ,
         goo:LibertyCountyFL ;
@@ -259,8 +113,8 @@ goo:CalhounCountyFLGeom a geosparql:Geometry ;
 goo:CharlotteCountyFL a goo:County ;
     rdfs:label      "Charlotte County, Florida"@en ;
     owl:sameAs      dbr:Charlotte_County%2C_Florida , wd:Q488499 ;
-    geo:lat         "26.868974"^^xsd:decimal ;
-    geo:long        "-81.941278"^^xsd:decimal ;
+    goo:lat         "26.868974"^^xsd:decimal ;
+    goo:lon        "-81.941278"^^xsd:decimal ;
     mds:Geohash     "dhv" ;
     goo:neighboringCounties goo:DeSotoCountyFL , goo:GladesCountyFL , goo:LeeCountyFL , goo:SarasotaCountyFL ;
     geosparql:hasGeometry goo:CharlotteCountyFLGeom .
@@ -272,8 +126,8 @@ goo:CharlotteCountyFLGeom a geosparql:Geometry ;
 goo:CitrusCountyFL a goo:County ;
     rdfs:label      "Citrus County, Florida"@en ;
     owl:sameAs      dbr:Citrus_County%2C_Florida , wd:Q488821 ;
-    geo:lat         "28.843640"^^xsd:decimal ;
-    geo:long        "-82.524810"^^xsd:decimal ;
+    goo:lat         "28.843640"^^xsd:decimal ;
+    goo:lon        "-82.524810"^^xsd:decimal ;
     mds:Geohash     "djj" ;
     goo:neighboringCounties goo:HernandoCountyFL , goo:LevyCountyFL , goo:MarionCountyFL , goo:SumterCountyFL ;
     geosparql:hasGeometry goo:CitrusCountyFLGeom .
@@ -285,8 +139,8 @@ goo:CitrusCountyFLGeom a geosparql:Geometry ;
 goo:ClayCountyFL a goo:County ;
     rdfs:label      "Clay County, Florida"@en ;
     owl:sameAs      dbr:Clay_County%2C_Florida , wd:Q488853 ;
-    geo:lat         "29.986584"^^xsd:decimal ;
-    geo:long        "-81.865036"^^xsd:decimal ;
+    goo:lat         "29.986584"^^xsd:decimal ;
+    goo:lon        "-81.865036"^^xsd:decimal ;
     mds:Geohash     "djm" ;
     goo:neighboringCounties goo:AlachuaCountyFL , goo:BakerCountyFL , goo:BradfordCountyFL , goo:DuvalCountyFL ,
         goo:PutnamCountyFL , goo:StJohnsCountyFL ;
@@ -299,8 +153,8 @@ goo:ClayCountyFLGeom a geosparql:Geometry ;
 goo:CollierCountyFL a goo:County ;
     rdfs:label      "Collier County, Florida"@en ;
     owl:sameAs      dbr:Collier_County%2C_Florida , wd:Q488531 ;
-    geo:lat         "26.118786"^^xsd:decimal ;
-    geo:long        "-81.400955"^^xsd:decimal ;
+    goo:lat         "26.118786"^^xsd:decimal ;
+    goo:lon        "-81.400955"^^xsd:decimal ;
     mds:Geohash     "dhw" , "dht" ;
     goo:neighboringCounties goo:BrowardCountyFL , goo:HendryCountyFL , goo:LeeCountyFL , goo:MiamiDadeCountyFL ,
         goo:MonroeCountyFL ;
@@ -313,8 +167,8 @@ goo:CollierCountyFLGeom a geosparql:Geometry ;
 goo:ColumbiaCountyFL a goo:County ;
     rdfs:label      "Columbia County, Florida"@en ;
     owl:sameAs      dbr:Columbia_County%2C_Florida , wd:Q173867 ;
-    geo:lat         "30.221651"^^xsd:decimal ;
-    geo:long        "-82.623371"^^xsd:decimal ;
+    goo:lat         "30.221651"^^xsd:decimal ;
+    goo:lon        "-82.623371"^^xsd:decimal ;
     mds:Geohash     "djm" ;
     goo:neighboringCounties goo:AlachuaCountyFL , goo:BakerCountyFL , goo:GilchristCountyFL , goo:HamiltonCountyFL ,
         goo:SuwanneeCountyFL , goo:UnionCountyFL ;
@@ -327,8 +181,8 @@ goo:ColumbiaCountyFLGeom a geosparql:Geometry ;
 goo:DeSotoCountyFL a goo:County ;
     rdfs:label      "DeSoto County, Florida"@en ;
     owl:sameAs      dbr:DeSoto_County%2C_Florida , wd:Q488796 ;
-    geo:lat         "27.190581"^^xsd:decimal ;
-    geo:long        "-81.806253"^^xsd:decimal ;
+    goo:lat         "27.190581"^^xsd:decimal ;
+    goo:lon        "-81.806253"^^xsd:decimal ;
     mds:Geohash     "dhv" ;
     goo:neighboringCounties goo:CharlotteCountyFL , goo:GladesCountyFL , goo:HardeeCountyFL , goo:HighlandsCountyFL ,
         goo:ManateeCountyFL , goo:SarasotaCountyFL ;
@@ -341,8 +195,8 @@ goo:DeSotoCountyFLGeom a geosparql:Geometry ;
 goo:DixieCountyFL a goo:County ;
     rdfs:label      "Dixie County, Florida"@en ;
     owl:sameAs      dbr:Dixie_County%2C_Florida , wd:Q488805 ;
-    geo:lat         "29.580899"^^xsd:decimal ;
-    geo:long        "-83.195666"^^xsd:decimal ;
+    goo:lat         "29.580899"^^xsd:decimal ;
+    goo:lon        "-83.195666"^^xsd:decimal ;
     mds:Geohash     "djk" , "djj" , "djh" , "djm" ;
     goo:neighboringCounties goo:GilchristCountyFL , goo:LafayetteCountyFL , goo:LevyCountyFL , goo:TaylorCountyFL ;
     geosparql:hasGeometry goo:DixieCountyFLGeom .
@@ -354,8 +208,8 @@ goo:DixieCountyFLGeom a geosparql:Geometry ;
 goo:DuvalCountyFL a goo:County ;
     rdfs:label      "Duval County, Florida"@en ;
     owl:sameAs      dbr:Duval_County%2C_Florida , wd:Q493605 ;
-    geo:lat         "30.335245"^^xsd:decimal ;
-    geo:long        "-81.648113"^^xsd:decimal ;
+    goo:lat         "30.335245"^^xsd:decimal ;
+    goo:lon        "-81.648113"^^xsd:decimal ;
     mds:Geohash     "djq" , "djm" ;
     goo:neighboringCounties goo:BakerCountyFL , goo:ClayCountyFL , goo:NassauCountyFL , goo:StJohnsCountyFL ;
     geosparql:hasGeometry goo:DuvalCountyFLGeom .
@@ -367,8 +221,8 @@ goo:DuvalCountyFLGeom a geosparql:Geometry ;
 goo:EscambiaCountyFL a goo:County ;
     rdfs:label      "Escambia County, Florida"@en ;
     owl:sameAs      dbr:Escambia_County%2C_Florida , wd:Q156643 ;
-    geo:lat         "30.611638"^^xsd:decimal ;
-    geo:long        "-87.338900"^^xsd:decimal ;
+    goo:lat         "30.611638"^^xsd:decimal ;
+    goo:lon        "-87.338900"^^xsd:decimal ;
     mds:Geohash     "dj9" , "dj6" , "djd" , "dj3" ;
     goo:neighboringCounties goo:OkaloosaCountyFL , goo:SantaRosaCountyFL ;
     geosparql:hasGeometry goo:EscambiaCountyFLGeom .
@@ -379,8 +233,8 @@ goo:EscambiaCountyFLGeom a geosparql:Geometry ;
 goo:FlaglerCountyFL a goo:County ;
     rdfs:label      "Flagler County, Florida"@en ;
     owl:sameAs      dbr:Flagler_County%2C_Florida , wd:Q386885 ;
-    geo:lat         "29.474891"^^xsd:decimal ;
-    geo:long        "-81.286253"^^xsd:decimal ;
+    goo:lat         "29.474891"^^xsd:decimal ;
+    goo:lon        "-81.286253"^^xsd:decimal ;
     mds:Geohash     "djn" , "djq" ;
     goo:neighboringCounties goo:PutnamCountyFL , goo:StJohnsCountyFL , goo:VolusiaCountyFL ;
     geosparql:hasGeometry goo:FlaglerCountyFLGeom .
@@ -391,8 +245,8 @@ goo:FlaglerCountyFLGeom a geosparql:Geometry ;
 goo:FranklinCountyFL a goo:County ;
     rdfs:label      "Franklin County, Florida"@en ;
     owl:sameAs      dbr:Franklin_County%2C_Florida , wd:Q488813 ;
-    geo:lat         "29.810176"^^xsd:decimal ;
-    geo:long        "-84.799174"^^xsd:decimal ;
+    goo:lat         "29.810176"^^xsd:decimal ;
+    goo:lon        "-84.799174"^^xsd:decimal ;
     mds:Geohash     "djk" , "dj7" ;
     goo:neighboringCounties goo:GulfCountyFL , goo:LibertyCountyFL , goo:WakullaCountyFL ;
     geosparql:hasGeometry goo:FranklinCountyFLGeom .
@@ -404,8 +258,8 @@ goo:FranklinCountyFLGeom a geosparql:Geometry ;
 goo:GadsdenCountyFL a goo:County ;
     rdfs:label      "Gadsden County, Florida"@en ;
     owl:sameAs      dbr:Gadsden_County%2C_Florida , wd:Q501848 ;
-    geo:lat         "30.578687"^^xsd:decimal ;
-    geo:long        "-84.612607"^^xsd:decimal ;
+    goo:lat         "30.578687"^^xsd:decimal ;
+    goo:lon        "-84.612607"^^xsd:decimal ;
     mds:Geohash     "djk" , "dj7" ;
     goo:neighboringCounties goo:CalhounCountyFL , goo:JacksonCountyFL , goo:LeonCountyFL , goo:LibertyCountyFL ;
     geosparql:hasGeometry goo:GadsdenCountyFLGeom .
@@ -416,8 +270,8 @@ goo:GadsdenCountyFLGeom a geosparql:Geometry ;
 goo:GilchristCountyFL a goo:County ;
     rdfs:label      "Gilchrist County, Florida"@en ;
     owl:sameAs      dbr:Gilchrist_County%2C_Florida , wd:Q111720 ;
-    geo:lat         "29.723456"^^xsd:decimal ;
-    geo:long        "-82.795801"^^xsd:decimal ;
+    goo:lat         "29.723456"^^xsd:decimal ;
+    goo:lon        "-82.795801"^^xsd:decimal ;
     mds:Geohash     "djk" , "djm" ;
     goo:neighboringCounties goo:AlachuaCountyFL , goo:ColumbiaCountyFL , goo:DixieCountyFL , goo:LafayetteCountyFL ,
         goo:LevyCountyFL , goo:SuwanneeCountyFL ;
@@ -430,8 +284,8 @@ goo:GilchristCountyFLGeom a geosparql:Geometry ;
 goo:GladesCountyFL a goo:County ;
     rdfs:label      "Glades County, Florida"@en ;
     owl:sameAs      dbr:Glades_County%2C_Florida , wd:Q488468 ;
-    geo:lat         "26.954810"^^xsd:decimal ;
-    geo:long        "-81.190820"^^xsd:decimal ;
+    goo:lat         "26.954810"^^xsd:decimal ;
+    goo:lon        "-81.190820"^^xsd:decimal ;
     mds:Geohash     "dhv" , "dhy" ;
     goo:neighboringCounties goo:CharlotteCountyFL , goo:DeSotoCountyFL , goo:HendryCountyFL , goo:HighlandsCountyFL ,
         goo:LeeCountyFL , goo:OkeechobeeCountyFL ;
@@ -444,8 +298,8 @@ goo:GladesCountyFLGeom a geosparql:Geometry ;
 goo:GulfCountyFL a goo:County ;
     rdfs:label      "Gulf County, Florida"@en ;
     owl:sameAs      dbr:Gulf_County%2C_Florida , wd:Q488461 ;
-    geo:lat         "29.907257"^^xsd:decimal ;
-    geo:long        "-85.256537"^^xsd:decimal ;
+    goo:lat         "29.907257"^^xsd:decimal ;
+    goo:lon        "-85.256537"^^xsd:decimal ;
     mds:Geohash     "dj7" ;
     goo:neighboringCounties goo:BayCountyFL , goo:CalhounCountyFL , goo:FranklinCountyFL , goo:LibertyCountyFL ;
     geosparql:hasGeometry goo:GulfCountyFLGeom .
@@ -457,8 +311,8 @@ goo:GulfCountyFLGeom a geosparql:Geometry ;
 goo:HamiltonCountyFL a goo:County ;
     rdfs:label      "Hamilton County, Florida"@en ;
     owl:sameAs      dbr:Hamilton_County%2C_Florida , wd:Q257311 ;
-    geo:lat         "30.491187"^^xsd:decimal ;
-    geo:long        "-82.951071"^^xsd:decimal ;
+    goo:lat         "30.491187"^^xsd:decimal ;
+    goo:lon        "-82.951071"^^xsd:decimal ;
     mds:Geohash     "djk" , "djm" ;
     goo:neighboringCounties goo:ColumbiaCountyFL , goo:MadisonCountyFL , goo:SuwanneeCountyFL ;
     geosparql:hasGeometry goo:HamiltonCountyFLGeom .
@@ -470,8 +324,8 @@ goo:HamiltonCountyFLGeom a geosparql:Geometry ;
 goo:HardeeCountyFL a goo:County ;
     rdfs:label      "Hardee County, Florida"@en ;
     owl:sameAs      dbr:Hardee_County%2C_Florida , wd:Q488792 ;
-    geo:lat         "27.492846"^^xsd:decimal ;
-    geo:long        "-81.821580"^^xsd:decimal ;
+    goo:lat         "27.492846"^^xsd:decimal ;
+    goo:lon        "-81.821580"^^xsd:decimal ;
     mds:Geohash     "dhv" ;
     goo:neighboringCounties goo:DeSotoCountyFL , goo:HighlandsCountyFL , goo:HillsboroughCountyFL , goo:ManateeCountyFL ,
         goo:PolkCountyFL ;
@@ -484,8 +338,8 @@ goo:HardeeCountyFLGeom a geosparql:Geometry ;
 goo:HendryCountyFL a goo:County ;
     rdfs:label      "Hendry County, Florida"@en ;
     owl:sameAs      dbr:Hendry_County%2C_Florida , wd:Q488488 ;
-    geo:lat         "26.539967"^^xsd:decimal ;
-    geo:long        "-81.152114"^^xsd:decimal ;
+    goo:lat         "26.539967"^^xsd:decimal ;
+    goo:lon        "-81.152114"^^xsd:decimal ;
     mds:Geohash     "dhv" , "dhw" , "dhy" , "dht" ;
     goo:neighboringCounties goo:BrowardCountyFL , goo:CollierCountyFL , goo:GladesCountyFL , goo:LeeCountyFL ,
         goo:MartinCountyFL , goo:OkeechobeeCountyFL , goo:PalmBeachCountyFL ;
@@ -498,8 +352,8 @@ goo:HendryCountyFLGeom a geosparql:Geometry ;
 goo:HernandoCountyFL a goo:County ;
     rdfs:label      "Hernando County, Florida"@en ;
     owl:sameAs      dbr:Hernando_County%2C_Florida , wd:Q488572 ;
-    geo:lat         "28.573043"^^xsd:decimal ;
-    geo:long        "-82.466227"^^xsd:decimal ;
+    goo:lat         "28.573043"^^xsd:decimal ;
+    goo:lon        "-82.466227"^^xsd:decimal ;
     mds:Geohash     "djj" ;
     goo:neighboringCounties goo:CitrusCountyFL , goo:PascoCountyFL , goo:SumterCountyFL ;
     geosparql:hasGeometry goo:HernandoCountyFLGeom .
@@ -511,8 +365,8 @@ goo:HernandoCountyFLGeom a geosparql:Geometry ;
 goo:HighlandsCountyFL a goo:County ;
     rdfs:label      "Highlands County, Florida"@en ;
     owl:sameAs      dbr:Highlands_County%2C_Florida , wd:Q488885 ;
-    geo:lat         "27.341080"^^xsd:decimal ;
-    geo:long        "-81.342353"^^xsd:decimal ;
+    goo:lat         "27.341080"^^xsd:decimal ;
+    goo:lon        "-81.342353"^^xsd:decimal ;
     mds:Geohash     "dhv" , "dhy" ;
     goo:neighboringCounties goo:DeSotoCountyFL , goo:GladesCountyFL , goo:HardeeCountyFL , goo:OkeechobeeCountyFL ,
         goo:OsceolaCountyFL , goo:PolkCountyFL ;
@@ -525,8 +379,8 @@ goo:HighlandsCountyFLGeom a geosparql:Geometry ;
 goo:HillsboroughCountyFL a goo:County ;
     rdfs:label      "Hillsborough County, Florida"@en ;
     owl:sameAs      dbr:Hillsborough_County%2C_Florida , wd:Q488874 ;
-    geo:lat         "27.906607"^^xsd:decimal ;
-    geo:long        "-82.349719"^^xsd:decimal ;
+    goo:lat         "27.906607"^^xsd:decimal ;
+    goo:lon        "-82.349719"^^xsd:decimal ;
     mds:Geohash     "dhv" , "djj" ;
     goo:neighboringCounties goo:HardeeCountyFL , goo:ManateeCountyFL , goo:PascoCountyFL , goo:PinellasCountyFL ,
         goo:PolkCountyFL ;
@@ -539,8 +393,8 @@ goo:HillsboroughCountyFLGeom a geosparql:Geometry ;
 goo:HolmesCountyFL a goo:County ;
     rdfs:label      "Holmes County, Florida"@en ;
     owl:sameAs      dbr:Holmes_County%2C_Florida , wd:Q488879 ;
-    geo:lat         "30.862007"^^xsd:decimal ;
-    geo:long        "-85.815939"^^xsd:decimal ;
+    goo:lat         "30.862007"^^xsd:decimal ;
+    goo:lon        "-85.815939"^^xsd:decimal ;
     mds:Geohash     "dje" , "dj7" , "dj6" , "djd" ;
     goo:neighboringCounties goo:JacksonCountyFL , goo:WaltonCountyFL , goo:WashingtonCountyFL ;
     geosparql:hasGeometry goo:HolmesCountyFLGeom .
@@ -552,8 +406,8 @@ goo:HolmesCountyFLGeom a geosparql:Geometry ;
 goo:IndianRiverCountyFL a goo:County ;
     rdfs:label      "Indian River County, Florida"@en ;
     owl:sameAs      dbr:Indian_River_County%2C_Florida , wd:Q488528 ;
-    geo:lat         "27.700528"^^xsd:decimal ;
-    geo:long        "-80.574789"^^xsd:decimal ;
+    goo:lat         "27.700528"^^xsd:decimal ;
+    goo:lon        "-80.574789"^^xsd:decimal ;
     mds:Geohash     "dhy" ;
     goo:neighboringCounties goo:BrevardCountyFL , goo:OkeechobeeCountyFL , goo:OsceolaCountyFL , goo:StLucieCountyFL ;
     geosparql:hasGeometry goo:IndianRiverCountyFLGeom .
@@ -565,8 +419,8 @@ goo:IndianRiverCountyFLGeom a geosparql:Geometry ;
 goo:JacksonCountyFL a goo:County ;
     rdfs:label      "Jackson County, Florida"@en ;
     owl:sameAs      dbr:Jackson_County%2C_Florida , wd:Q488537 ;
-    geo:lat         "30.789249"^^xsd:decimal ;
-    geo:long        "-85.208814"^^xsd:decimal ;
+    goo:lat         "30.789249"^^xsd:decimal ;
+    goo:lon        "-85.208814"^^xsd:decimal ;
     mds:Geohash     "dje" , "dj7" ;
     goo:neighboringCounties goo:BayCountyFL , goo:CalhounCountyFL , goo:GadsdenCountyFL , goo:HolmesCountyFL ,
         goo:LibertyCountyFL , goo:WashingtonCountyFL ;
@@ -579,8 +433,8 @@ goo:JacksonCountyFLGeom a geosparql:Geometry ;
 goo:JeffersonCountyFL a goo:County ;
     rdfs:label      "Jefferson County, Florida"@en ;
     owl:sameAs      dbr:Jefferson_County%2C_Florida , wd:Q488859 ;
-    geo:lat         "30.424558"^^xsd:decimal ;
-    geo:long        "-83.890859"^^xsd:decimal ;
+    goo:lat         "30.424558"^^xsd:decimal ;
+    goo:lon        "-83.890859"^^xsd:decimal ;
     mds:Geohash     "djk" ;
     goo:neighboringCounties goo:LeonCountyFL , goo:MadisonCountyFL , goo:TaylorCountyFL , goo:WakullaCountyFL ;
     geosparql:hasGeometry goo:JeffersonCountyFLGeom .
@@ -592,8 +446,8 @@ goo:JeffersonCountyFLGeom a geosparql:Geometry ;
 goo:LafayetteCountyFL a goo:County ;
     rdfs:label      "Lafayette County, Florida"@en ;
     owl:sameAs      dbr:Lafayette_County%2C_Florida , wd:Q488810 ;
-    geo:lat         "29.990066"^^xsd:decimal ;
-    geo:long        "-83.178510"^^xsd:decimal ;
+    goo:lat         "29.990066"^^xsd:decimal ;
+    goo:lon        "-83.178510"^^xsd:decimal ;
     mds:Geohash     "djk" ;
     goo:neighboringCounties goo:DixieCountyFL , goo:GilchristCountyFL , goo:MadisonCountyFL , goo:SuwanneeCountyFL ,
         goo:TaylorCountyFL ;
@@ -606,8 +460,8 @@ goo:LafayetteCountyFLGeom a geosparql:Geometry ;
 goo:LakeCountyFL a goo:County ;
     rdfs:label      "Lake County, Florida"@en ;
     owl:sameAs      dbr:Lake_County%2C_Florida , wd:Q501029 ;
-    geo:lat         "28.764113"^^xsd:decimal ;
-    geo:long        "-81.712282"^^xsd:decimal ;
+    goo:lat         "28.764113"^^xsd:decimal ;
+    goo:lon        "-81.712282"^^xsd:decimal ;
     mds:Geohash     "djn" , "djj" ;
     goo:neighboringCounties goo:MarionCountyFL , goo:OrangeCountyFL , goo:OsceolaCountyFL , goo:PolkCountyFL ,
         goo:SeminoleCountyFL , goo:SumterCountyFL , goo:VolusiaCountyFL ;
@@ -620,8 +474,8 @@ goo:LakeCountyFLGeom a geosparql:Geometry ;
 goo:LeeCountyFL a goo:County ;
     rdfs:label      "Lee County, Florida"@en ;
     owl:sameAs      dbr:Lee_County%2C_Florida , wd:Q494616 ;
-    geo:lat         "26.559035"^^xsd:decimal ;
-    geo:long        "-81.891994"^^xsd:decimal ;
+    goo:lat         "26.559035"^^xsd:decimal ;
+    goo:lon        "-81.891994"^^xsd:decimal ;
     mds:Geohash      "dhv" , "dht" ;
     goo:neighboringCounties goo:CharlotteCountyFL , goo:CollierCountyFL , goo:GladesCountyFL , goo:HendryCountyFL ;
     geosparql:hasGeometry goo:LeeCountyFLGeom .
@@ -633,8 +487,8 @@ goo:LeeCountyFLGeom a geosparql:Geometry ;
 goo:LeonCountyFL a goo:County ;
     rdfs:label      "Leon County, Florida"@en ;
     owl:sameAs      dbr:Leon_County%2C_Florida , wd:Q488576 ;
-    geo:lat         "30.459310"^^xsd:decimal ;
-    geo:long        "-84.277800"^^xsd:decimal ;
+    goo:lat         "30.459310"^^xsd:decimal ;
+    goo:lon        "-84.277800"^^xsd:decimal ;
     mds:Geohash     "djk" , "dj7" ;
     goo:neighboringCounties goo:GadsdenCountyFL , goo:JeffersonCountyFL , goo:LibertyCountyFL , goo:WakullaCountyFL ;
     geosparql:hasGeometry goo:LeonCountyFLGeom .
@@ -646,8 +500,8 @@ goo:LeonCountyFLGeom a geosparql:Geometry ;
 goo:LevyCountyFL a goo:County ;
     rdfs:label      "Levy County, Florida"@en ;
     owl:sameAs      dbr:Levy_County%2C_Florida , wd:Q501022 ;
-    geo:lat         "29.284457"^^xsd:decimal ;
-    geo:long        "-82.783462"^^xsd:decimal ;
+    goo:lat         "29.284457"^^xsd:decimal ;
+    goo:lon        "-82.783462"^^xsd:decimal ;
     mds:Geohash     "djk" , "djh" , "djm" , "djj" ;
     goo:neighboringCounties goo:AlachuaCountyFL , goo:CitrusCountyFL , goo:DixieCountyFL , goo:GilchristCountyFL ,
         goo:MarionCountyFL ;
@@ -660,8 +514,8 @@ goo:LevyCountyFLGeom a geosparql:Geometry ;
 goo:LibertyCountyFL a goo:County ;
     rdfs:label      "Liberty County, Florida"@en ;
     owl:sameAs      dbr:Liberty_County%2C_Florida , wd:Q255943 ;
-    geo:lat         "30.259849"^^xsd:decimal ;
-    geo:long        "-84.868580"^^xsd:decimal ;
+    goo:lat         "30.259849"^^xsd:decimal ;
+    goo:lon        "-84.868580"^^xsd:decimal ;
     mds:Geohash     "dj7" ;
     goo:neighboringCounties goo:CalhounCountyFL , goo:FranklinCountyFL , goo:GadsdenCountyFL , goo:GulfCountyFL ,
         goo:JacksonCountyFL , goo:LeonCountyFL , goo:WakullaCountyFL ;
@@ -674,8 +528,8 @@ goo:LibertyCountyFLGeom a geosparql:Geometry ;
 goo:MadisonCountyFL a goo:County ;
     rdfs:label      "Madison County, Florida"@en ;
     owl:sameAs      dbr:Madison_County%2C_Florida , wd:Q494463 ;
-    geo:lat         "30.447233"^^xsd:decimal ;
-    geo:long        "-83.470416"^^xsd:decimal ;
+    goo:lat         "30.447233"^^xsd:decimal ;
+    goo:lon        "-83.470416"^^xsd:decimal ;
     mds:Geohash     "djk" ;
     goo:neighboringCounties goo:HamiltonCountyFL , goo:JeffersonCountyFL , goo:LafayetteCountyFL , goo:SuwanneeCountyFL ,
         goo:TaylorCountyFL ;
@@ -688,8 +542,8 @@ goo:MadisonCountyFLGeom a geosparql:Geometry ;
 goo:ManateeCountyFL a goo:County ;
     rdfs:label      "Manatee County, Florida"@en ;
     owl:sameAs      dbr:Manatee_County%2C_Florida , wd:Q262708 ;
-    geo:lat         "27.481682"^^xsd:decimal ;
-    geo:long        "-82.368767"^^xsd:decimal ;
+    goo:lat         "27.481682"^^xsd:decimal ;
+    goo:lon        "-82.368767"^^xsd:decimal ;
     mds:Geohash     "dhv" ;
     goo:neighboringCounties goo:DeSotoCountyFL , goo:HardeeCountyFL , goo:HillsboroughCountyFL , goo:SarasotaCountyFL ;
     geosparql:hasGeometry goo:ManateeCountyFLGeom .
@@ -701,8 +555,8 @@ goo:ManateeCountyFLGeom a geosparql:Geometry ;
 goo:MarionCountyFL a goo:County ;
     rdfs:label      "Marion County, Florida"@en ;
     owl:sameAs      dbr:Marion_County%2C_Florida , wd:Q501014 ;
-    geo:lat         "29.202805"^^xsd:decimal ;
-    geo:long        "-82.043100"^^xsd:decimal ;
+    goo:lat         "29.202805"^^xsd:decimal ;
+    goo:lon        "-82.043100"^^xsd:decimal ;
     mds:Geohash     "djj" ;
     goo:neighboringCounties goo:AlachuaCountyFL , goo:CitrusCountyFL , goo:LakeCountyFL , goo:LevyCountyFL ,
         goo:PutnamCountyFL , goo:SumterCountyFL , goo:VolusiaCountyFL ;
@@ -715,8 +569,8 @@ goo:MarionCountyFLGeom a geosparql:Geometry ;
 goo:MartinCountyFL a goo:County ;
     rdfs:label      "Martin County, Florida"@en ;
     owl:sameAs      dbr:Martin_County%2C_Florida , wd:Q648752 ;
-    geo:lat         "27.083604"^^xsd:decimal ;
-    geo:long        "-80.398201"^^xsd:decimal ;
+    goo:lat         "27.083604"^^xsd:decimal ;
+    goo:lon        "-80.398201"^^xsd:decimal ;
     mds:Geohash     "dhz" , "dhy" ;
     goo:neighboringCounties goo:HendryCountyFL , goo:OkeechobeeCountyFL , goo:PalmBeachCountyFL , goo:StLucieCountyFL ;
     geosparql:hasGeometry goo:MartinCountyFLGeom .
@@ -728,8 +582,8 @@ goo:MartinCountyFLGeom a geosparql:Geometry ;
 goo:MiamiDadeCountyFL a goo:County ;
     rdfs:label      "Miami-Dade County, Florida"@en ;
     owl:sameAs      dbr:Miami-Dade_County%2C_Florida , wd:Q468557 ;
-    geo:lat         "25.610580"^^xsd:decimal ;
-    geo:long        "-80.497099"^^xsd:decimal ;
+    goo:lat         "25.610580"^^xsd:decimal ;
+    goo:lon        "-80.497099"^^xsd:decimal ;
     mds:Geohash     "dhx" , "dhw" , "dhr" , "dhq" ;
     goo:neighboringCounties goo:BrowardCountyFL , goo:CollierCountyFL , goo:MonroeCountyFL ;
     geosparql:hasGeometry goo:MiamiDadeCountyFLGeom .
@@ -741,8 +595,8 @@ goo:MiamiDadeCountyFLGeom a geosparql:Geometry ;
 goo:MonroeCountyFL a goo:County ;
     rdfs:label      "Monroe County, Florida"@en ;
     owl:sameAs      dbr:Monroe_County%2C_Florida , wd:Q263742 ;
-    geo:lat         "24.768883"^^xsd:decimal ;
-    geo:long        "-80.953270"^^xsd:decimal ;
+    goo:lat         "24.768883"^^xsd:decimal ;
+    goo:lon        "-80.953270"^^xsd:decimal ;
     mds:Geohash     "dhm" , "dhw" , "dhq" , "dht" ;
     goo:neighboringCounties goo:CollierCountyFL , goo:MiamiDadeCountyFL ;
     geosparql:hasGeometry goo:MonroeCountyFLGeom .
@@ -754,8 +608,8 @@ goo:MonroeCountyFLGeom a geosparql:Geometry ;
 goo:NassauCountyFL a goo:County ;
     rdfs:label      "Nassau County, Florida"@en ;
     owl:sameAs      dbr:Nassau_County%2C_Florida , wd:Q488818 ;
-    geo:lat         "30.605963"^^xsd:decimal ;
-    geo:long        "-81.765087"^^xsd:decimal ;
+    goo:lat         "30.605963"^^xsd:decimal ;
+    goo:lon        "-81.765087"^^xsd:decimal ;
     mds:Geohash     "djq" , "djm" ;
     goo:neighboringCounties goo:BakerCountyFL , goo:DuvalCountyFL ;
     geosparql:hasGeometry goo:NassauCountyFLGeom .
@@ -767,8 +621,8 @@ goo:NassauCountyFLGeom a geosparql:Geometry ;
 goo:OkaloosaCountyFL a goo:County ;
     rdfs:label      "Okaloosa County, Florida"@en ;
     owl:sameAs      dbr:Okaloosa_County%2C_Florida , wd:Q494476 ;
-    geo:lat         "30.665851"^^xsd:decimal ;
-    geo:long        "-86.594187"^^xsd:decimal ;
+    goo:lat         "30.665851"^^xsd:decimal ;
+    goo:lon        "-86.594187"^^xsd:decimal ;
     mds:Geohash     "dj6" , "djd" ;
     goo:neighboringCounties goo:EscambiaCountyFL , goo:SantaRosaCountyFL , goo:WaltonCountyFL ;
     geosparql:hasGeometry goo:OkaloosaCountyFLGeom .
@@ -780,8 +634,8 @@ goo:OkaloosaCountyFLGeom a geosparql:Geometry ;
 goo:OkeechobeeCountyFL a goo:County ;
     rdfs:label      "Okeechobee County, Florida"@en ;
     owl:sameAs      dbr:Okeechobee_County%2C_Florida , wd:Q501123 ;
-    geo:lat         "27.385592"^^xsd:decimal ;
-    geo:long        "-80.887388"^^xsd:decimal ;
+    goo:lat         "27.385592"^^xsd:decimal ;
+    goo:lon        "-80.887388"^^xsd:decimal ;
     mds:Geohash     "dhy" ;
     goo:neighboringCounties goo:GladesCountyFL , goo:HendryCountyFL , goo:HighlandsCountyFL , goo:IndianRiverCountyFL ,
         goo:MartinCountyFL , goo:OsceolaCountyFL , goo:PolkCountyFL , goo:StLucieCountyFL ;
@@ -794,8 +648,8 @@ goo:OkeechobeeCountyFLGeom a geosparql:Geometry ;
 goo:OrangeCountyFL a goo:County ;
     rdfs:label      "Orange County, Florida"@en ;
     owl:sameAs      dbr:Orange_County%2C_Florida , wd:Q488543 ;
-    geo:lat         "28.514391"^^xsd:decimal ;
-    geo:long        "-81.323284"^^xsd:decimal ;
+    goo:lat         "28.514391"^^xsd:decimal ;
+    goo:lon        "-81.323284"^^xsd:decimal ;
     mds:Geohash     "djn" , "djj" ;
     goo:neighboringCounties goo:BrevardCountyFL , goo:LakeCountyFL , goo:OsceolaCountyFL , goo:PolkCountyFL ,
         goo:SeminoleCountyFL , goo:VolusiaCountyFL ;
@@ -808,8 +662,8 @@ goo:OrangeCountyFLGeom a geosparql:Geometry ;
 goo:OsceolaCountyFL a goo:County ;
     rdfs:label      "Osceola County, Florida"@en ;
     owl:sameAs      dbr:Osceola_County%2C_Florida , wd:Q501067 ;
-    geo:lat         "28.059027"^^xsd:decimal ;
-    geo:long        "-81.139312"^^xsd:decimal ;
+    goo:lat         "28.059027"^^xsd:decimal ;
+    goo:lon        "-81.139312"^^xsd:decimal ;
     mds:Geohash     "dhv" , "djj" , "dhy" , "djn" ;
     goo:neighboringCounties goo:BrevardCountyFL , goo:HighlandsCountyFL , goo:IndianRiverCountyFL , goo:LakeCountyFL ,
         goo:OkeechobeeCountyFL , goo:OrangeCountyFL , goo:PolkCountyFL ;
@@ -822,8 +676,8 @@ goo:OsceolaCountyFLGeom a geosparql:Geometry ;
 goo:PalmBeachCountyFL a goo:County ;
     rdfs:label      "Palm Beach County, Florida"@en ;
     owl:sameAs      dbr:Palm_Beach_County%2C_Florida , wd:Q484294 ;
-    geo:lat         "26.649126"^^xsd:decimal ;
-    geo:long        "-80.448354"^^xsd:decimal ;
+    goo:lat         "26.649126"^^xsd:decimal ;
+    goo:lon        "-80.448354"^^xsd:decimal ;
     mds:Geohash     "dhx" , "dhw" , "dhy" , "dhz" ;
     goo:neighboringCounties goo:BrowardCountyFL , goo:HendryCountyFL , goo:MartinCountyFL ;
     geosparql:hasGeometry goo:PalmBeachCountyFLGeom .
@@ -835,8 +689,8 @@ goo:PalmBeachCountyFLGeom a geosparql:Geometry ;
 goo:PascoCountyFL a goo:County ;
     rdfs:label      "Pasco County, Florida"@en ;
     owl:sameAs      dbr:Pasco_County%2C_Florida , wd:Q500992 ;
-    geo:lat         "28.307711"^^xsd:decimal ;
-    geo:long        "-82.464832"^^xsd:decimal ;
+    goo:lat         "28.307711"^^xsd:decimal ;
+    goo:lon        "-82.464832"^^xsd:decimal ;
     mds:Geohash     "djj" ;
     goo:neighboringCounties goo:HernandoCountyFL , goo:HillsboroughCountyFL , goo:PinellasCountyFL , goo:PolkCountyFL ,
         goo:SumterCountyFL ;
@@ -849,8 +703,8 @@ goo:PascoCountyFLGeom a geosparql:Geometry ;
 goo:PinellasCountyFL a goo:County ;
     rdfs:label      "Pinellas County, Florida"@en ;
     owl:sameAs      dbr:Pinellas_County%2C_Florida , wd:Q494556 ;
-    geo:lat         "27.903108"^^xsd:decimal ;
-    geo:long        "-82.739519"^^xsd:decimal ;
+    goo:lat         "27.903108"^^xsd:decimal ;
+    goo:lon        "-82.739519"^^xsd:decimal ;
     mds:Geohash     "dhv" , "djj" ;
     goo:neighboringCounties goo:HillsboroughCountyFL , goo:PascoCountyFL ;
     geosparql:hasGeometry goo:PinellasCountyFLGeom .
@@ -862,8 +716,8 @@ goo:PinellasCountyFLGeom a geosparql:Geometry ;
 goo:PolkCountyFL a goo:County ;
     rdfs:label      "Polk County, Florida"@en ;
     owl:sameAs      dbr:Polk_County%2C_Florida , wd:Q501043 ;
-    geo:lat         "27.953649"^^xsd:decimal ;
-    geo:long        "-81.693534"^^xsd:decimal ;
+    goo:lat         "27.953649"^^xsd:decimal ;
+    goo:lon        "-81.693534"^^xsd:decimal ;
     mds:Geohash     "djn" , "dhv" , "dhy" , "djj" ;
     goo:neighboringCounties goo:HardeeCountyFL , goo:HighlandsCountyFL , goo:HillsboroughCountyFL , goo:LakeCountyFL ,
         goo:OkeechobeeCountyFL , goo:OrangeCountyFL , goo:OsceolaCountyFL , goo:PascoCountyFL ,
@@ -877,8 +731,8 @@ goo:PolkCountyFLGeom a geosparql:Geometry ;
 goo:PutnamCountyFL a goo:County ;
     rdfs:label      "Putnam County, Florida"@en ;
     owl:sameAs      dbr:Putnam_County%2C_Florida , wd:Q503059 ;
-    geo:lat         "29.593896"^^xsd:decimal ;
-    geo:long        "-81.732039"^^xsd:decimal ;
+    goo:lat         "29.593896"^^xsd:decimal ;
+    goo:lon        "-81.732039"^^xsd:decimal ;
     mds:Geohash     "djj", "djq", "djn", "djm" ;
     goo:neighboringCounties goo:AlachuaCountyFL , goo:BradfordCountyFL , goo:ClayCountyFL , goo:FlaglerCountyFL ,
         goo:MarionCountyFL , goo:StJohnsCountyFL , goo:VolusiaCountyFL ;
@@ -891,8 +745,8 @@ goo:PutnamCountyFLGeom a geosparql:Geometry ;
 goo:SantaRosaCountyFL a goo:County ;
     rdfs:label      "Santa Rosa County, Florida"@en ;
     owl:sameAs      dbr:Santa_Rosa_County%2C_Florida , wd:Q494500 ;
-    geo:lat         "30.701269"^^xsd:decimal ;
-    geo:long        "-87.012890"^^xsd:decimal ;
+    goo:lat         "30.701269"^^xsd:decimal ;
+    goo:lon        "-87.012890"^^xsd:decimal ;
     mds:Geohash     "dj9", "dj6", "djd", "dj3" ;
     goo:neighboringCounties goo:EscambiaCountyFL , goo:OkaloosaCountyFL ;
     geosparql:hasGeometry goo:SantaRosaCountyFLGeom .
@@ -904,8 +758,8 @@ goo:SantaRosaCountyFLGeom a geosparql:Geometry ;
 goo:SarasotaCountyFL a goo:County ;
     rdfs:label      "Sarasota County, Florida"@en ;
     owl:sameAs      dbr:Sarasota_County%2C_Florida , wd:Q501163 ;
-    geo:lat         "27.184386"^^xsd:decimal ;
-    geo:long        "-82.365835"^^xsd:decimal ;
+    goo:lat         "27.184386"^^xsd:decimal ;
+    goo:lon        "-82.365835"^^xsd:decimal ;
     mds:Geohash     "dhv" ;
     goo:neighboringCounties goo:CharlotteCountyFL , goo:DeSotoCountyFL , goo:ManateeCountyFL ;
     geosparql:hasGeometry goo:SarasotaCountyFLGeom .
@@ -917,8 +771,8 @@ goo:SarasotaCountyFLGeom a geosparql:Geometry ;
 goo:SeminoleCountyFL a goo:County ;
     rdfs:label      "Seminole County, Florida"@en ;
     owl:sameAs      dbr:Seminole_County%2C_Florida , wd:Q280596 ;
-    geo:lat         "28.690092"^^xsd:decimal ;
-    geo:long        "-81.131989"^^xsd:decimal ;
+    goo:lat         "28.690092"^^xsd:decimal ;
+    goo:lon        "-81.131989"^^xsd:decimal ;
     mds:Geohash     "djn" ;
     goo:neighboringCounties goo:LakeCountyFL , goo:OrangeCountyFL , goo:VolusiaCountyFL ;
     geosparql:hasGeometry goo:SeminoleCountyFLGeom .
@@ -930,8 +784,8 @@ goo:SeminoleCountyFLGeom a geosparql:Geometry ;
 goo:StJohnsCountyFL a goo:County ;
     rdfs:label      "St. Johns County, Florida"@en ;
     owl:sameAs      dbr:St._Johns_County%2C_Florida , wd:Q494471 ;
-    geo:lat         "29.890487"^^xsd:decimal ;
-    geo:long        "-81.400040"^^xsd:decimal ;
+    goo:lat         "29.890487"^^xsd:decimal ;
+    goo:lon        "-81.400040"^^xsd:decimal ;
     mds:Geohash     "djm" , "djq" ;
     goo:neighboringCounties goo:ClayCountyFL , goo:DuvalCountyFL , goo:FlaglerCountyFL , goo:PutnamCountyFL ;
     geosparql:hasGeometry goo:StJohnsCountyFLGeom .
@@ -943,8 +797,8 @@ goo:StJohnsCountyFLGeom a geosparql:Geometry ;
 goo:StLucieCountyFL a goo:County ;
     rdfs:label      "St. Lucie County, Florida"@en ;
     owl:sameAs      dbr:St._Lucie_County%2C_Florida , wd:Q494564 ;
-    geo:lat         "27.379814"^^xsd:decimal ;
-    geo:long        "-80.443536"^^xsd:decimal ;
+    goo:lat         "27.379814"^^xsd:decimal ;
+    goo:lon        "-80.443536"^^xsd:decimal ;
     mds:Geohash     "dhy" ;
     goo:neighboringCounties goo:IndianRiverCountyFL , goo:MartinCountyFL , goo:OkeechobeeCountyFL ;
     geosparql:hasGeometry goo:StLucieCountyFLGeom .
@@ -956,8 +810,8 @@ goo:StLucieCountyFLGeom a geosparql:Geometry ;
 goo:SumterCountyFL a goo:County ;
     rdfs:label      "Sumter County, Florida"@en ;
     owl:sameAs      dbr:Sumter_County%2C_Florida , wd:Q503889 ;
-    geo:lat         "28.714101"^^xsd:decimal ;
-    geo:long        "-82.074347"^^xsd:decimal ;
+    goo:lat         "28.714101"^^xsd:decimal ;
+    goo:lon        "-82.074347"^^xsd:decimal ;
     mds:Geohash     "djj" ;
     goo:neighboringCounties goo:CitrusCountyFL , goo:HernandoCountyFL , goo:LakeCountyFL , goo:MarionCountyFL ,
         goo:PascoCountyFL , goo:PolkCountyFL ;
@@ -970,8 +824,8 @@ goo:SumterCountyFLGeom a geosparql:Geometry ;
 goo:SuwanneeCountyFL a goo:County ;
     rdfs:label      "Suwannee County, Florida"@en ;
     owl:sameAs      dbr:Suwannee_County%2C_Florida , wd:Q501036 ;
-    geo:lat         "30.189244"^^xsd:decimal ;
-    geo:long        "-82.992754"^^xsd:decimal ;
+    goo:lat         "30.189244"^^xsd:decimal ;
+    goo:lon        "-82.992754"^^xsd:decimal ;
     mds:Geohash     "djk" , "djm" ;
     goo:neighboringCounties goo:ColumbiaCountyFL , goo:GilchristCountyFL , goo:HamiltonCountyFL , goo:LafayetteCountyFL ,
         goo:MadisonCountyFL ;
@@ -984,8 +838,8 @@ goo:SuwanneeCountyFLGeom a geosparql:Geometry ;
 goo:TaylorCountyFL a goo:County ;
     rdfs:label      "Taylor County, Florida"@en ;
     owl:sameAs      dbr:Taylor_County%2C_Florida , wd:Q503064 ;
-    geo:lat         "30.009908"^^xsd:decimal ;
-    geo:long        "-83.609483"^^xsd:decimal ;
+    goo:lat         "30.009908"^^xsd:decimal ;
+    goo:lon        "-83.609483"^^xsd:decimal ;
     mds:Geohash     "djk" ;
     goo:neighboringCounties goo:DixieCountyFL , goo:JeffersonCountyFL , goo:LafayetteCountyFL , goo:MadisonCountyFL ;
     geosparql:hasGeometry goo:TaylorCountyFLGeom .
@@ -997,8 +851,8 @@ goo:TaylorCountyFLGeom a geosparql:Geometry ;
 goo:UnionCountyFL a goo:County ;
     rdfs:label      "Union County, Florida"@en ;
     owl:sameAs      dbr:Union_County%2C_Florida , wd:Q501078 ;
-    geo:lat         "30.054280"^^xsd:decimal ;
-    geo:long        "-82.366918"^^xsd:decimal ;
+    goo:lat         "30.054280"^^xsd:decimal ;
+    goo:lon        "-82.366918"^^xsd:decimal ;
     mds:Geohash     "djm" ;
     goo:neighboringCounties goo:AlachuaCountyFL , goo:BakerCountyFL , goo:BradfordCountyFL , goo:ColumbiaCountyFL ;
     geosparql:hasGeometry goo:UnionCountyFLGeom .
@@ -1010,8 +864,8 @@ goo:UnionCountyFLGeom a geosparql:Geometry ;
 goo:VolusiaCountyFL a goo:County ;
     rdfs:label      "Volusia County, Florida"@en ;
     owl:sameAs      dbr:Volusia_County%2C_Florida , wd:Q494541 ;
-    geo:lat         "29.057769"^^xsd:decimal ;
-    geo:long        "-81.161792"^^xsd:decimal ;
+    goo:lat         "29.057769"^^xsd:decimal ;
+    goo:lon        "-81.161792"^^xsd:decimal ;
     mds:Geohash     "djn" , "djj" ;
     goo:neighboringCounties goo:BrevardCountyFL , goo:FlaglerCountyFL , goo:LakeCountyFL , goo:MarionCountyFL ,
         goo:OrangeCountyFL , goo:PutnamCountyFL , goo:SeminoleCountyFL ;
@@ -1024,8 +878,8 @@ goo:VolusiaCountyFLGeom a geosparql:Geometry ;
 goo:WakullaCountyFL a goo:County ;
     rdfs:label      "Wakulla County, Florida"@en ;
     owl:sameAs      dbr:Wakulla_County%2C_Florida , wd:Q505417 ;
-    geo:lat         "30.139432"^^xsd:decimal ;
-    geo:long        "-84.374846"^^xsd:decimal ;
+    goo:lat         "30.139432"^^xsd:decimal ;
+    goo:lon        "-84.374846"^^xsd:decimal ;
     mds:Geohash     "djk" , "dj7" ;
     goo:neighboringCounties goo:FranklinCountyFL , goo:JeffersonCountyFL , goo:LeonCountyFL , goo:LibertyCountyFL ;
     geosparql:hasGeometry goo:WakullaCountyFLGeom .
@@ -1037,8 +891,8 @@ goo:WakullaCountyFLGeom a geosparql:Geometry ;
 goo:WaltonCountyFL a goo:County ;
     rdfs:label      "Walton County, Florida"@en ;
     owl:sameAs      dbr:Walton_County%2C_Florida , wd:Q503455 ;
-    geo:lat         "30.631211"^^xsd:decimal ;
-    geo:long        "-86.176614"^^xsd:decimal ;
+    goo:lat         "30.631211"^^xsd:decimal ;
+    goo:lon        "-86.176614"^^xsd:decimal ;
     mds:Geohash     "dj6" , "djd" ;
     goo:neighboringCounties goo:BayCountyFL , goo:HolmesCountyFL , goo:OkaloosaCountyFL , goo:WashingtonCountyFL ;
     geosparql:hasGeometry goo:WaltonCountyFLGeom .
@@ -1050,8 +904,8 @@ goo:WaltonCountyFLGeom a geosparql:Geometry ;
 goo:WashingtonCountyFL a goo:County ;
     rdfs:label      "Washington County, Florida"@en ;
     owl:sameAs      dbr:Washington_County%2C_Florida , wd:Q263418 ;
-    geo:lat         "30.602217"^^xsd:decimal ;
-    geo:long        "-85.662797"^^xsd:decimal ;
+    goo:lat         "30.602217"^^xsd:decimal ;
+    goo:lon        "-85.662797"^^xsd:decimal ;
     mds:Geohash     "dj7" , "dj6" ;
     goo:neighboringCounties goo:BayCountyFL , goo:HolmesCountyFL , goo:JacksonCountyFL , goo:WaltonCountyFL ;
     geosparql:hasGeometry goo:WashingtonCountyFLGeom .
