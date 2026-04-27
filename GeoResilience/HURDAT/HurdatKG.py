@@ -9,7 +9,6 @@ from hurdat_lookup import search_hurdat
 Goo    = Namespace("https://ucf-henat.github.io/GeoOutageOnto/#")
 Gokg   = Namespace("http://example.org/resource#")
 Schema = Namespace("http://schema.org/")
-Geo    = Namespace("http://www.w3.org/2003/01/geo/wgs84_pos#")
 
 class HurdatKG:
     """
@@ -27,7 +26,6 @@ class HurdatKG:
         g.bind("rdfs",   RDFS)
         g.bind("rdf",    RDF)
         g.bind("xsd",    XSD)
-        g.bind("geo",    Geo)
 
         return g
 
@@ -97,9 +95,9 @@ class HurdatKG:
                 lat = rec["lat"]
                 lon = rec["lon"]
                 if not math.isnan(lat):
-                    g.add((track_uri, Geo.lat, Literal(lat, datatype=XSD.decimal)))
+                    g.add((track_uri, Goo.lat, Literal(lat, datatype=XSD.decimal)))
                 if not math.isnan(lon):
-                    g.add((track_uri, Geo.long, Literal(lon, datatype=XSD.decimal)))
+                    g.add((track_uri, Goo.lon, Literal(lon, datatype=XSD.decimal)))
 
                 # Intensity
                 if rec["max_wind_kt"] != -999:
